@@ -1,0 +1,219 @@
+# =====================================================
+# Dependencies and Package Managers
+# =====================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+.npm
+.yarn/
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# =====================================================
+# Build Output and Distribution
+# =====================================================
+dist/
+build/
+out/
+lib/
+.next/
+.nuxt/
+.vuepress/dist
+*.tgz
+
+# =====================================================
+# Environment Configuration
+# =====================================================
+.env
+.env.local
+.env.*.local
+.env.development
+.env.staging
+.env.production
+.env.test
+
+# =====================================================
+# Database Files
+# =====================================================
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+data/
+database/*.db
+database/*.sqlite
+database/*.sqlite3
+database/*.db-shm
+database/*.db-wal
+
+# =====================================================
+# Logs and Runtime Data
+# =====================================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.npmrc.local
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# =====================================================
+# Testing and Coverage
+# =====================================================
+coverage/
+.nyc_output/
+.coverage/
+junit.xml
+test-results/
+playwright-report/
+test-results.xml
+.jest/
+.vitest/
+
+# =====================================================
+# TypeScript
+# =====================================================
+*.tsbuildinfo
+.tscache
+tsconfig.tsbuildinfo
+.eslintcache
+*.d.ts.map
+
+# =====================================================
+# IDE and Editor Files
+# =====================================================
+.vscode/
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# =====================================================
+# Operating System Files
+# =====================================================
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+Icon?
+
+# Windows
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# =====================================================
+# Temporary and Cache Files
+# =====================================================
+temp/
+.tmp/
+*.tmp
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# =====================================================
+# Upload and User Content
+# =====================================================
+public/uploads/
+uploads/
+user-uploads/
+static/uploads/
+
+# =====================================================
+# Session and State Management
+# =====================================================
+sessions/
+.sessions/
+session-store/
+
+# =====================================================
+# Security and Secrets
+# =====================================================
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+secrets/
+.secrets/
+private/
+*.backup
+*.bak
+
+# =====================================================
+# Claude Code and MCP Server Artifacts
+# =====================================================
+.claude/
+.serena/
+.playwright-mcp/
+.context7/
+.morphllm/
+.magic/
+claudedocs/temp/
+claudedocs/cache/
+
+# =====================================================
+# Package Manager Locks (Optional - Uncomment if needed)
+# =====================================================
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# =====================================================
+# Miscellaneous
+# =====================================================
+*.tgz
+*.tar.gz
+.serverless/
+.webpack/
+.dynamodb/
+.fusebox/
+.tern-port
+.eslintcache
+.node_repl_history
+.tern-project
+.divshot-cache/
+.grunt
+.lock-wscript
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+speed-measure-plugin*.json

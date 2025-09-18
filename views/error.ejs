@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>エラー - ECサイト</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f5f5f5;
+        }
+        .error-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #d9534f; }
+        .error-details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1>エラーが発生しました</h1>
+        <% if (typeof status !== 'undefined') { %>
+            <p><strong>ステータス:</strong> <%= status %></p>
+        <% } %>
+        <% if (typeof message !== 'undefined') { %>
+            <p><strong>エラー:</strong> <%= message %></p>
+        <% } %>
+        <% if (typeof error !== 'undefined' && error.stack && process.env.NODE_ENV !== 'production') { %>
+            <div class="error-details">
+                <h3>詳細情報（開発環境）:</h3>
+                <pre><%= error.stack %></pre>
+            </div>
+        <% } %>
+        <a href="/" class="back-link">← ホームに戻る</a>
+    </div>
+</body>
+</html>

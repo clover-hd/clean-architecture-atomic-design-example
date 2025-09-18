@@ -1,0 +1,250 @@
+<%
+/**
+ * CartTable Organism Component
+ * @param {Object} cart - カートオブジェクト
+ * @param {Array} cart.items - カート商品配列
+ * @param {string} [class] - 追加CSSクラス
+ * @param {boolean} [editable] - 編集可能フラグ
+ */
+const cartData = cart || {};
+const cartItems = cartData.items || [];
+const additionalClass = (typeof className !== 'undefined') ? className : '';
+const isEditable = editable !== false;
+const isEmpty = cartItems.length === 0;
+%>
+
+<section class="cart-table <%= additionalClass %>">
+  <% if (isEmpty) { %>
+    <div class="cart-table__empty">
+      <div class="cart-table__empty-content">
+        <h2 class="cart-table__empty-title">カートは空です</h2>
+        <p class="cart-table__empty-text">
+          商品を追加してお買い物をお楽しみください。
+        </p>
+        <%- include('../atoms/button', {
+          type: 'primary',
+          text: '商品を見る',
+          href: '/products',
+          className: 'cart-table__shop-button'
+        }) %>
+      </div>
+    </div>
+  <% } else { %>
+    <div class="cart-table__header">
+      <h2 class="cart-table__title">ショッピングカート</h2>
+      <p class="cart-table__count">
+        <%= cartItems.length %>種類の商品
+      </p>
+    </div>
+
+    <div class="cart-table__content">
+      <!-- デスクトップ用テーブル -->
+      <div class="cart-table__desktop">
+        <table class="cart-table__table" role="table">
+          <thead>
+            <tr class="cart-table__header-row">
+              <th class="cart-table__header-cell cart-table__header-cell--product">商品</th>
+              <th class="cart-table__header-cell cart-table__header-cell--price">価格</th>
+              <% if (isEditable) { %>
+                <th class="cart-table__header-cell cart-table__header-cell--quantity">数量</th>
+              <% } else { %>
+                <th class="cart-table__header-cell cart-table__header-cell--quantity">数量</th>
+              <% } %>
+              <th class="cart-table__header-cell cart-table__header-cell--total">小計</th>
+              <% if (isEditable) { %>
+                <th class="cart-table__header-cell cart-table__header-cell--actions">操作</th>
+              <% } %>
+            </tr>
+          </thead>
+          <tbody>
+            <% cartItems.forEach(item => { %>
+              <tr class="cart-table__row" data-item-id="<%= item.id %>">
+                <!-- 商品情報 -->
+                <td class="cart-table__cell cart-table__cell--product">
+                  <div class="cart-table__product">
+                    <div class="cart-table__product-image">
+                      <%- include('../atoms/image', {
+                        src: item.product.image || '/images/no-image.jpg',
+                        alt: item.product.name,
+                        className: 'cart-table__product-img',
+                        width: '80',
+                        height: '80'
+                      }) %>
+                    </div>
+                    <div class="cart-table__product-info">
+                      <h3 class="cart-table__product-name">
+                        <%- include('../atoms/link', {
+                          href: '/products/' + item.product.id,
+                          text: item.product.name,
+                          className: 'cart-table__product-link'
+                        }) %>
+                      </h3>
+                      <% if (item.product.description) { %>
+                        <p class="cart-table__product-description">
+                          <%= item.product.description.substring(0, 50) %>...
+                        </p>
+                      <% } %>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- 価格 -->
+                <td class="cart-table__cell cart-table__cell--price">
+                  <span class="cart-table__price">
+                    ¥<%= item.product.price.toLocaleString() %>
+                  </span>
+                </td>
+
+                <!-- 数量 -->
+                <td class="cart-table__cell cart-table__cell--quantity">
+                  <% if (isEditable) { %>
+                    <div class="cart-table__quantity-controls">
+                      <button
+                        class="cart-table__quantity-btn cart-table__quantity-btn--decrease"
+                        onclick="updateCartQuantity('<%= item.id %>', <%= item.quantity - 1 %>)"
+                        <%= item.quantity <= 1 ? 'disabled' : '' %>
+                        aria-label="数量を減らす"
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        class="cart-table__quantity-input"
+                        value="<%= item.quantity %>"
+                        min="1"
+                        max="<%= item.product.stock %>"
+                        onchange="updateCartQuantity('<%= item.id %>', this.value)"
+                        aria-label="数量"
+                      />
+                      <button
+                        class="cart-table__quantity-btn cart-table__quantity-btn--increase"
+                        onclick="updateCartQuantity('<%= item.id %>', <%= item.quantity + 1 %>)"
+                        <%= item.quantity >= item.product.stock ? 'disabled' : '' %>
+                        aria-label="数量を増やす"
+                      >
+                        +
+                      </button>
+                    </div>
+                  <% } else { %>
+                    <span class="cart-table__quantity-display">
+                      <%= item.quantity %>
+                    </span>
+                  <% } %>
+                </td>
+
+                <!-- 小計 -->
+                <td class="cart-table__cell cart-table__cell--total">
+                  <span class="cart-table__subtotal">
+                    ¥<%= (item.product.price * item.quantity).toLocaleString() %>
+                  </span>
+                </td>
+
+                <!-- 操作 -->
+                <% if (isEditable) { %>
+                  <td class="cart-table__cell cart-table__cell--actions">
+                    <%- include('../atoms/button', {
+                      type: 'danger',
+                      text: '削除',
+                      onclick: "removeFromCart('" + item.id + "')",
+                      className: 'cart-table__remove-btn',
+                      size: 'small'
+                    }) %>
+                  </td>
+                <% } %>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- モバイル用カード表示 -->
+      <div class="cart-table__mobile">
+        <% cartItems.forEach(item => { %>
+          <div class="cart-table__mobile-item" data-item-id="<%= item.id %>">
+            <div class="cart-table__mobile-product">
+              <div class="cart-table__mobile-image">
+                <%- include('../atoms/image', {
+                  src: item.product.image || '/images/no-image.jpg',
+                  alt: item.product.name,
+                  className: 'cart-table__mobile-img',
+                  width: '100',
+                  height: '100'
+                }) %>
+              </div>
+              <div class="cart-table__mobile-info">
+                <h3 class="cart-table__mobile-name">
+                  <%- include('../atoms/link', {
+                    href: '/products/' + item.product.id,
+                    text: item.product.name,
+                    className: 'cart-table__mobile-link'
+                  }) %>
+                </h3>
+                <div class="cart-table__mobile-price">
+                  ¥<%= item.product.price.toLocaleString() %>
+                </div>
+              </div>
+            </div>
+
+            <div class="cart-table__mobile-controls">
+              <% if (isEditable) { %>
+                <div class="cart-table__mobile-quantity">
+                  <span class="cart-table__mobile-label">数量:</span>
+                  <div class="cart-table__quantity-controls">
+                    <button
+                      class="cart-table__quantity-btn cart-table__quantity-btn--decrease"
+                      onclick="updateCartQuantity('<%= item.id %>', <%= item.quantity - 1 %>)"
+                      <%= item.quantity <= 1 ? 'disabled' : '' %>
+                    >
+                      -
+                    </button>
+                    <span class="cart-table__quantity-display"><%= item.quantity %></span>
+                    <button
+                      class="cart-table__quantity-btn cart-table__quantity-btn--increase"
+                      onclick="updateCartQuantity('<%= item.id %>', <%= item.quantity + 1 %>)"
+                      <%= item.quantity >= item.product.stock ? 'disabled' : '' %>
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              <% } else { %>
+                <div class="cart-table__mobile-quantity">
+                  <span class="cart-table__mobile-label">数量:</span>
+                  <span class="cart-table__quantity-display"><%= item.quantity %></span>
+                </div>
+              <% } %>
+
+              <div class="cart-table__mobile-total">
+                <span class="cart-table__mobile-label">小計:</span>
+                <span class="cart-table__subtotal">
+                  ¥<%= (item.product.price * item.quantity).toLocaleString() %>
+                </span>
+              </div>
+
+              <% if (isEditable) { %>
+                <div class="cart-table__mobile-actions">
+                  <%- include('../atoms/button', {
+                    type: 'danger',
+                    text: '削除',
+                    onclick: "removeFromCart('" + item.id + "')",
+                    className: 'cart-table__mobile-remove',
+                    size: 'small'
+                  }) %>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+
+      <!-- 継続ショッピングリンク -->
+      <div class="cart-table__continue-shopping">
+        <%- include('../atoms/link', {
+          href: '/products',
+          text: '← 買い物を続ける',
+          className: 'cart-table__continue-link'
+        }) %>
+      </div>
+    </div>
+  <% } %>
+</section>

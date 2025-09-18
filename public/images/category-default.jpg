@@ -1,0 +1,58 @@
+<svg width="300" height="200" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="categoryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8fafc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="300" height="200" fill="url(#categoryGradient)"/>
+
+  <!-- Border -->
+  <rect x="1" y="1" width="298" height="198" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8,4"/>
+
+  <!-- Category icon - shopping bag -->
+  <g transform="translate(125, 60)">
+    <!-- Shopping bag outline -->
+    <path d="M10 30 L40 30 L38 70 L12 70 Z" fill="none" stroke="#64748b" stroke-width="3" stroke-linejoin="round"/>
+    <!-- Bag handles -->
+    <path d="M18 30 L18 22 A7 7 0 0 1 32 22 L32 30" fill="none" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+    <!-- Decorative lines on bag -->
+    <line x1="15" y1="40" x2="35" y2="40" stroke="#94a3b8" stroke-width="1"/>
+    <line x1="15" y1="50" x2="35" y2="50" stroke="#94a3b8" stroke-width="1"/>
+    <line x1="15" y1="60" x2="35" y2="60" stroke="#94a3b8" stroke-width="1"/>
+  </g>
+
+  <!-- Category placeholder text -->
+  <text x="150" y="160" text-anchor="middle" fill="#64748b" font-family="Arial, sans-serif" font-size="14" font-weight="500">
+    カテゴリ画像
+  </text>
+
+  <!-- Small decorative elements -->
+  <circle cx="50" cy="50" r="3" fill="#e2e8f0"/>
+  <circle cx="250" cy="50" r="3" fill="#e2e8f0"/>
+  <circle cx="50" cy="150" r="3" fill="#e2e8f0"/>
+  <circle cx="250" cy="150" r="3" fill="#e2e8f0"/>
+
+  <!-- Product icons around the main shopping bag -->
+  <g transform="translate(50, 100)">
+    <rect x="0" y="0" width="12" height="12" rx="2" fill="#cbd5e1"/>
+    <circle cx="6" cy="6" r="3" fill="#94a3b8"/>
+  </g>
+
+  <g transform="translate(230, 100)">
+    <rect x="0" y="0" width="12" height="12" rx="2" fill="#cbd5e1"/>
+    <rect x="2" y="2" width="8" height="8" rx="1" fill="#94a3b8"/>
+  </g>
+
+  <g transform="translate(80, 40)">
+    <polygon points="6,0 12,10 0,10" fill="#cbd5e1"/>
+  </g>
+
+  <g transform="translate(210, 40)">
+    <circle cx="6" cy="6" r="6" fill="#cbd5e1"/>
+    <circle cx="6" cy="6" r="3" fill="#94a3b8"/>
+  </g>
+</svg>

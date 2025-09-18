@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Check - ECサイト</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+        .health-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status-ok { color: #28a745; }
+        .timestamp { color: #6c757d; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="health-container">
+        <h1 class="status-ok">✅ Server Status: OK</h1>
+        <p>ECサイトサーバーが正常に動作しています</p>
+        <p class="timestamp">Check Time: <%= new Date().toISOString() %></p>
+        <div>
+            <h3>環境情報</h3>
+            <p>Node.js: <%= process.version %></p>
+            <p>Environment: <%= process.env.NODE_ENV || 'development' %></p>
+        </div>
+    </div>
+</body>
+</html>

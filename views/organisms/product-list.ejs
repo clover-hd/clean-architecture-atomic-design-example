@@ -1,0 +1,148 @@
+<%
+/**
+ * ProductList Organism Component
+ * @param {Array} products - 商品配列
+ * @param {Object} [pagination] - ページネーション情報
+ * @param {Object} [filters] - フィルター情報
+ * @param {string} [class] - 追加CSSクラス
+ * @param {boolean} [showFilters] - フィルター表示フラグ
+ */
+const productList = products || [];
+const paginationData = pagination || null;
+const filterData = filters || {};
+const additionalClass = (typeof className !== 'undefined') ? className : '';
+const showFilterSection = showFilters !== false;
+const isEmpty = productList.length === 0;
+
+// ソートオプション
+const sortOptions = [
+  { value: 'name_asc', text: '名前順（昇順）' },
+  { value: 'name_desc', text: '名前順（降順）' },
+  { value: 'price_asc', text: '価格順（安い順）' },
+  { value: 'price_desc', text: '価格順（高い順）' },
+  { value: 'created_desc', text: '新着順' }
+];
+
+const currentSort = filterData.sort || 'name_asc';
+%>
+
+<section class="product-list <%= additionalClass %>">
+  <!-- フィルター・ソート -->
+  <% if (showFilterSection) { %>
+    <div class="product-list__filters">
+      <div class="product-list__filters-container">
+        <!-- 検索結果表示 -->
+        <div class="product-list__results-info">
+          <p class="product-list__results-text">
+            <% if (filterData.query) { %>
+              「<%= filterData.query %>」の検索結果:
+            <% } %>
+            <%= productList.length %>件の商品
+            <% if (paginationData && paginationData.total) { %>
+              （全<%= paginationData.total %>件中）
+            <% } %>
+          </p>
+        </div>
+
+        <!-- ソート -->
+        <div class="product-list__sort">
+          <form class="product-list__sort-form" method="GET">
+            <!-- 既存のクエリパラメータを保持 -->
+            <% if (filterData.query) { %>
+              <input type="hidden" name="q" value="<%= filterData.query %>">
+            <% } %>
+            <% if (filterData.category) { %>
+              <input type="hidden" name="category" value="<%= filterData.category %>">
+            <% } %>
+
+            <%- include('../atoms/label', {
+              text: '並び順:',
+              htmlFor: 'sort',
+              className: 'product-list__sort-label'
+            }) %>
+
+            <select name="sort" id="sort" class="product-list__sort-select" onchange="this.form.submit()">
+              <% sortOptions.forEach(option => { %>
+                <option
+                  value="<%= option.value %>"
+                  <%= option.value === currentSort ? 'selected' : '' %>
+                >
+                  <%= option.text %>
+                </option>
+              <% }); %>
+            </select>
+          </form>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- 商品グリッド -->
+  <div class="product-list__grid">
+    <% if (isEmpty) { %>
+      <div class="product-list__empty">
+        <div class="product-list__empty-content">
+          <h3 class="product-list__empty-title">商品が見つかりません</h3>
+          <p class="product-list__empty-text">
+            <% if (filterData.query) { %>
+              検索条件を変更してお試しください。
+            <% } else { %>
+              現在表示できる商品がありません。
+            <% } %>
+          </p>
+          <div class="product-list__empty-actions">
+            <% if (filterData.query) { %>
+              <%- include('../atoms/button', {
+                type: 'secondary',
+                text: '検索条件をクリア',
+                href: '/products',
+                className: 'product-list__clear-search'
+              }) %>
+            <% } %>
+            <%- include('../atoms/button', {
+              type: 'primary',
+              text: '全商品を見る',
+              href: '/products',
+              className: 'product-list__view-all'
+            }) %>
+          </div>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="product-list__items">
+        <% productList.forEach(product => { %>
+          <div class="product-list__item">
+            <%- include('../molecules/product-card', {
+              product: product,
+              showAddToCart: true,
+              className: 'product-list__card'
+            }) %>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- ページネーション -->
+  <% if (paginationData && paginationData.totalPages > 1) { %>
+    <div class="product-list__pagination">
+      <%- include('../molecules/pagination', {
+        currentPage: paginationData.currentPage,
+        totalPages: paginationData.totalPages,
+        baseUrl: '/products',
+        queryParams: {
+          q: filterData.query,
+          category: filterData.category,
+          sort: filterData.sort
+        },
+        className: 'product-list__pagination-nav'
+      }) %>
+    </div>
+  <% } %>
+
+  <!-- 読み込み中インジケーター（JavaScript用） -->
+  <div class="product-list__loading" style="display: none;" aria-hidden="true">
+    <div class="product-list__loading-spinner"></div>
+    <p class="product-list__loading-text">商品を読み込み中...</p>
+  </div>
+</section>

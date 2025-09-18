@@ -1,0 +1,219 @@
+<%
+/**
+ * Admin Layout Template
+ * @param {string} title - ページタイトル
+ * @param {Object} user - 管理者ユーザー情報
+ * @param {string} [currentPath] - 現在のパス
+ * @param {Object} [errors] - エラーメッセージ
+ * @param {Array} [messages] - 通知メッセージ
+ * @param {string} [messageType] - メッセージタイプ
+ * @param {Array} [customScripts] - カスタムスクリプト
+ */
+const pageTitle = title || '管理画面';
+const adminUser = user || {};
+const currentUrl = currentPath || '';
+const errorData = errors || {};
+const messageList = messages || [];
+const msgType = messageType || 'info';
+const scripts = customScripts || [];
+
+// 管理画面ナビゲーション
+const adminNavigation = [
+  {
+    href: '/admin',
+    text: 'ダッシュボード',
+    icon: '📊',
+    active: currentUrl === '/admin'
+  },
+  {
+    href: '/admin/products',
+    text: '商品管理',
+    icon: '📦',
+    active: currentUrl.startsWith('/admin/products')
+  },
+  {
+    href: '/admin/orders',
+    text: '注文管理',
+    icon: '📋',
+    active: currentUrl.startsWith('/admin/orders')
+  },
+  {
+    href: '/admin/users',
+    text: 'ユーザー管理',
+    icon: '👥',
+    active: currentUrl.startsWith('/admin/users')
+  },
+  {
+    href: '/admin/settings',
+    text: '設定',
+    icon: '⚙️',
+    active: currentUrl.startsWith('/admin/settings')
+  }
+];
+%>
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <%- include('../partials/head', {
+    title: pageTitle + ' | 管理画面',
+    description: 'ECサイト管理画面',
+    canonicalUrl: process.env.BASE_URL + currentUrl
+  }) %>
+
+  <!-- Admin-specific CSS -->
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body class="admin-layout">
+  <!-- Skip Link for Accessibility -->
+  <a href="#admin-main-content" class="skip-link">メインコンテンツへ移動</a>
+
+  <!-- Admin Wrapper -->
+  <div class="admin-wrapper">
+    <!-- Admin Header -->
+    <header class="admin-header" role="banner">
+      <div class="admin-header__container">
+        <!-- Logo/Brand -->
+        <div class="admin-header__brand">
+          <%- include('../atoms/link', {
+            href: '/admin',
+            text: '管理画面',
+            className: 'admin-header__logo'
+          }) %>
+        </div>
+
+        <!-- Admin User Info -->
+        <div class="admin-header__user">
+          <div class="admin-header__user-info">
+            <span class="admin-header__user-name">
+              <%= adminUser.name || 'Administrator' %>
+            </span>
+            <span class="admin-header__user-role">管理者</span>
+          </div>
+
+          <div class="admin-header__actions">
+            <%- include('../atoms/button', {
+              type: 'secondary',
+              text: 'サイトを見る',
+              href: '/',
+              target: '_blank',
+              size: 'small',
+              className: 'admin-header__view-site'
+            }) %>
+
+            <%- include('../atoms/button', {
+              type: 'outline',
+              text: 'ログアウト',
+              href: '/admin/logout',
+              size: 'small',
+              className: 'admin-header__logout'
+            }) %>
+          </div>
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="admin-header__mobile-toggle" aria-expanded="false" aria-controls="admin-sidebar">
+          <span class="admin-header__toggle-bar"></span>
+          <span class="admin-header__toggle-bar"></span>
+          <span class="admin-header__toggle-bar"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="admin-sidebar" role="navigation" aria-label="管理メニュー">
+      <nav class="admin-sidebar__nav">
+        <ul class="admin-sidebar__list">
+          <% adminNavigation.forEach(item => { %>
+            <li class="admin-sidebar__item">
+              <%- include('../atoms/link', {
+                href: item.href,
+                className: 'admin-sidebar__link' + (item.active ? ' admin-sidebar__link--active' : ''),
+                'aria-current': item.active ? 'page' : undefined
+              }) %>
+                <span class="admin-sidebar__icon" aria-hidden="true"><%= item.icon %></span>
+                <span class="admin-sidebar__text"><%= item.text %></span>
+              </a>
+            </li>
+          <% }); %>
+        </ul>
+
+        <!-- Sidebar Footer -->
+        <div class="admin-sidebar__footer">
+          <div class="admin-sidebar__version">
+            <small>v1.0.0</small>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Admin Main Content -->
+    <main id="admin-main-content" class="admin-main" role="main">
+      <!-- Flash Messages -->
+      <% if (Object.keys(errorData).length > 0) { %>
+        <%- include('../partials/error-messages', {
+          errors: errorData,
+          type: 'error'
+        }) %>
+      <% } %>
+
+      <% if (messageList.length > 0) { %>
+        <%- include('../partials/error-messages', {
+          messages: messageList,
+          type: msgType
+        }) %>
+      <% } %>
+
+      <!-- Page Header -->
+      <div class="admin-page-header">
+        <div class="admin-page-header__container">
+          <h1 class="admin-page-header__title"><%= pageTitle %></h1>
+
+          <% if (typeof pageActions !== 'undefined' && pageActions.length > 0) { %>
+            <div class="admin-page-header__actions">
+              <% pageActions.forEach(action => { %>
+                <%- include('../atoms/button', {
+                  type: action.type || 'primary',
+                  text: action.text,
+                  href: action.href,
+                  onclick: action.onclick,
+                  className: 'admin-page-header__action'
+                }) %>
+              <% }); %>
+            </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Page Content -->
+      <div class="admin-page-content">
+        <div class="admin-page-content__container">
+          <%- body %>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="admin-loading-overlay" class="admin-loading-overlay" style="display: none;" aria-hidden="true">
+    <div class="admin-loading-overlay__spinner"></div>
+    <p class="admin-loading-overlay__text">処理中...</p>
+  </div>
+
+  <!-- Modal Container -->
+  <div id="admin-modal-container" class="admin-modal-container" style="display: none;" aria-hidden="true"></div>
+
+  <!-- Scripts -->
+  <%- include('../partials/scripts', {
+    customScripts: ['/js/admin.js', ...scripts]
+  }) %>
+
+  <!-- Admin-specific inline scripts -->
+  <% if (typeof adminScript !== 'undefined') { %>
+    <script>
+      <%- adminScript %>
+    </script>
+  <% } %>
+</body>
+</html>

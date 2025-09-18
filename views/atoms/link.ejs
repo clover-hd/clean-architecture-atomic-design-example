@@ -1,0 +1,42 @@
+<%
+/**
+ * Link Atom Component
+ * @param {string} href - リンクURL
+ * @param {string} text - リンクテキスト
+ * @param {string} [target] - ターゲット（_blank等）
+ * @param {string} [rel] - rel属性
+ * @param {string} [class] - 追加CSSクラス
+ * @param {string} [id] - ID属性
+ * @param {string} [title] - タイトル属性
+ * @param {boolean} [external] - 外部リンクフラグ
+ * @param {string} [ariaCurrent] - aria-current属性
+ * @param {string} [role] - role属性
+ */
+const linkHref = (typeof href !== 'undefined') ? href : '#';
+const linkText = (typeof text !== 'undefined') ? text : 'Link';
+const linkTarget = (typeof target !== 'undefined') ? target : '';
+const linkRel = (typeof rel !== 'undefined') ? rel : '';
+const additionalClass = (typeof className !== 'undefined') ? className : '';
+const linkId = (typeof id !== 'undefined') ? id : '';
+const linkTitle = (typeof title !== 'undefined') ? title : '';
+const isExternal = (typeof external !== 'undefined') ? external : false;
+const linkAriaCurrent = (typeof ariaCurrent !== 'undefined') ? ariaCurrent : '';
+const linkRole = (typeof role !== 'undefined') ? role : '';
+%>
+
+<a
+  href="<%= linkHref %>"
+  <% if (linkId) { %>id="<%= linkId %>"<% } %>
+  class="link <%= additionalClass %>"
+  <% if (linkTarget) { %>target="<%= linkTarget %>"<% } %>
+  <% if (linkRel) { %>rel="<%= linkRel %>"<% } %>
+  <% if (linkTitle) { %>title="<%= linkTitle %>"<% } %>
+  <% if (linkAriaCurrent) { %>aria-current="<%= linkAriaCurrent %>"<% } %>
+  <% if (linkRole) { %>role="<%= linkRole %>"<% } %>
+  <% if (isExternal) { %>rel="noopener noreferrer" target="_blank"<% } %>
+>
+  <%= linkText %>
+  <% if (isExternal) { %>
+    <span class="link__external-icon" aria-hidden="true">↗</span>
+  <% } %>
+</a>

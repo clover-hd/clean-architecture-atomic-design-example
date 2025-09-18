@@ -1,0 +1,43 @@
+<%
+/**
+ * Button Atom Component
+ * @param {string} type - ボタンタイプ (primary|secondary|danger|outline)
+ * @param {string} size - サイズ (small|medium|large)
+ * @param {string} text - ボタンテキスト
+ * @param {string} [onclick] - クリックイベント
+ * @param {boolean} [disabled] - 無効化フラグ
+ * @param {string} [id] - ID属性
+ * @param {string} [class] - 追加CSSクラス
+ * @param {string} [href] - リンクURL（aタグの場合）
+ * @param {string} [form] - フォームID（submitの場合）
+ */
+const btnType = (typeof type != 'undefined') ? type : 'primary';
+const btnSize = (typeof size != 'undefined') ? size : 'medium';
+const btnText = (typeof text != 'undefined') ? text : 'Button';
+const isDisabled = (typeof disabled != 'undefined') ? disabled : false;
+const additionalClass = (typeof className != 'undefined') ? className : '';
+const btnId = (typeof id != 'undefined') ? id : '';
+%>
+
+<% if (typeof href != 'undefined') { %>
+  <a
+    href="<%= href %>"
+    <% if (btnId) { %>id="<%= btnId %>"<% } %>
+    class="btn btn--<%= btnType %> btn--<%= btnSize %> <%= additionalClass %>"
+    <% if (isDisabled) { %>aria-disabled="true"<% } %>
+    role="button"
+  >
+    <%= btnText %>
+  </a>
+<% } else { %>
+  <button
+    type="<%= (typeof formId != 'undefined') ? 'submit' : 'button' %>"
+    <% if (btnId) { %>id="<%= btnId %>"<% } %>
+    <% if (typeof formId != 'undefined') { %>form="<%= formId %>"<% } %>
+    class="btn btn--<%= btnType %> btn--<%= btnSize %> <%= additionalClass %>"
+    <% if (isDisabled) { %>disabled aria-disabled="true"<% } %>
+    <% if (typeof onclick != 'undefined') { %>onclick="<%= onclick %>"<% } %>
+  >
+    <%= btnText %>
+  </button>
+<% } %>

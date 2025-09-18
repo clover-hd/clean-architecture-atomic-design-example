@@ -1,0 +1,62 @@
+<%
+/**
+ * Scripts Partial Component
+ * @param {Array} [customScripts] - カスタムスクリプトファイル配列
+ * @param {boolean} [includeAnalytics] - アナリティクス含めるかどうか
+ */
+const scripts = typeof customScripts !== 'undefined' ? customScripts : [];
+const analytics = typeof includeAnalytics !== 'undefined' ? includeAnalytics : true;
+%>
+
+<!-- Core JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Component-specific JavaScript -->
+<script src="/js/components/header.js"></script>
+<script src="/js/components/cart.js"></script>
+<script src="/js/components/product.js"></script>
+
+<!-- Custom Scripts -->
+<% scripts.forEach(script => { %>
+  <script src="<%= script %>"></script>
+<% }); %>
+
+<!-- Analytics (Development/Learning Environment - Mock) -->
+<% if (analytics && process.env.NODE_ENV === 'production') { %>
+  <!-- Google Analytics or other analytics would go here in production -->
+  <script>
+    // Mock analytics for learning purposes
+    console.log('Analytics initialized (mock)');
+  </script>
+<% } %>
+
+<!-- Service Worker Registration -->
+<script>
+  // Service Worker for offline functionality (learning purposes)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(registration) {
+          console.log('ServiceWorker registration successful');
+        })
+        .catch(function(error) {
+          console.log('ServiceWorker registration failed');
+        });
+    });
+  }
+</script>
+
+<!-- Error Handling -->
+<script>
+  // Global error handler
+  window.addEventListener('error', function(event) {
+    console.error('Global error:', event.error);
+    // In production, you might want to send this to an error tracking service
+  });
+
+  // Unhandled promise rejection handler
+  window.addEventListener('unhandledrejection', function(event) {
+    console.error('Unhandled promise rejection:', event.reason);
+    // In production, you might want to send this to an error tracking service
+  });
+</script>

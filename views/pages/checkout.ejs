@@ -1,0 +1,317 @@
+<%
+/**
+ * Checkout Page
+ * @param {Object} cart - カート情報
+ * @param {Object} [user] - ログインユーザー情報
+ * @param {Object} [errors] - バリデーションエラー
+ * @param {Object} [formData] - フォームデータ
+ */
+const cartData = cart || {};
+const userData = user || null;
+const formErrors = errors || {};
+const formValues = formData || {};
+
+// パンくずリスト
+const breadcrumbs = [
+  { href: '/', text: 'ホーム' },
+  { href: '/cart', text: 'ショッピングカート' },
+  { href: '/checkout', text: 'ご注文手続き' }
+];
+
+const isEmpty = !cartData.items || cartData.items.length === 0;
+%>
+
+<% layout('./templates/base', {
+  title: 'ご注文手続き',
+  description: 'ご注文の最終確認とお客様情報の入力を行ってください。',
+  breadcrumbs: breadcrumbs,
+  bodyClass: 'page-checkout',
+  customScripts: ['/js/checkout.js']
+}) %>
+
+<% if (isEmpty) { %>
+  <!-- Empty Cart Redirect -->
+  <div class="checkout-page__empty">
+    <div class="checkout-page__empty-container">
+      <h1 class="checkout-page__empty-title">カートが空です</h1>
+      <p class="checkout-page__empty-description">
+        ご注文手続きを行うには、まず商品をカートに追加してください。
+      </p>
+      <%- include('../atoms/button', {
+        type: 'primary',
+        text: '商品を見る',
+        href: '/products',
+        size: 'large'
+      }) %>
+    </div>
+  </div>
+<% } else { %>
+  <div class="checkout-page">
+    <div class="checkout-page__container">
+      <!-- Page Header -->
+      <header class="checkout-page__header">
+        <h1 class="checkout-page__title">ご注文手続き</h1>
+
+        <!-- Checkout Steps -->
+        <nav class="checkout-steps" aria-label="注文手続きのステップ">
+          <ol class="checkout-steps__list">
+            <li class="checkout-steps__item checkout-steps__item--active">
+              <span class="checkout-steps__number">1</span>
+              <span class="checkout-steps__label">お客様情報</span>
+            </li>
+            <li class="checkout-steps__item">
+              <span class="checkout-steps__number">2</span>
+              <span class="checkout-steps__label">お支払い</span>
+            </li>
+            <li class="checkout-steps__item">
+              <span class="checkout-steps__number">3</span>
+              <span class="checkout-steps__label">完了</span>
+            </li>
+          </ol>
+        </nav>
+      </header>
+
+      <div class="checkout-page__content">
+        <!-- Order Form -->
+        <div class="checkout-page__form">
+          <%- include('../organisms/order-form', {
+            user: userData,
+            cart: cartData,
+            errors: formErrors,
+            formData: formValues,
+            className: 'checkout-page__order-form'
+          }) %>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="checkout-page__summary">
+          <!-- Cart Summary -->
+          <%- include('../molecules/cart-summary', {
+            cart: cartData,
+            showCheckout: false,
+            className: 'checkout-page__cart-summary'
+          }) %>
+
+          <!-- Order Items -->
+          <div class="checkout-page__items">
+            <h3 class="checkout-page__items-title">ご注文内容</h3>
+            <div class="checkout-page__items-list">
+              <% cartData.items.forEach(item => { %>
+                <div class="checkout-page__item">
+                  <div class="checkout-page__item-image">
+                    <%- include('../atoms/image', {
+                      src: item.product.image || '/images/no-image.jpg',
+                      alt: item.product.name,
+                      className: 'checkout-page__item-img',
+                      width: '60',
+                      height: '60'
+                    }) %>
+                  </div>
+
+                  <div class="checkout-page__item-details">
+                    <h4 class="checkout-page__item-name">
+                      <%= item.product.name %>
+                    </h4>
+                    <div class="checkout-page__item-meta">
+                      <span class="checkout-page__item-quantity">
+                        数量: <%= item.quantity %>
+                      </span>
+                      <span class="checkout-page__item-price">
+                        ¥<%= item.product.price.toLocaleString() %>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="checkout-page__item-total">
+                    ¥<%= (item.product.price * item.quantity).toLocaleString() %>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          </div>
+
+          <!-- Security Information -->
+          <div class="checkout-page__security">
+            <h4 class="checkout-page__security-title">安心・安全なお取引</h4>
+            <ul class="checkout-page__security-list">
+              <li class="checkout-page__security-item">
+                <span class="checkout-page__security-icon">🔒</span>
+                SSL暗号化通信で個人情報を保護
+              </li>
+              <li class="checkout-page__security-item">
+                <span class="checkout-page__security-icon">🛡️</span>
+                厳重なセキュリティ管理
+              </li>
+              <li class="checkout-page__security-item">
+                <span class="checkout-page__security-icon">📞</span>
+                購入後のサポート対応
+              </li>
+            </ul>
+          </div>
+
+          <!-- Return Policy -->
+          <div class="checkout-page__policy">
+            <h4 class="checkout-page__policy-title">返品・交換について</h4>
+            <p class="checkout-page__policy-text">
+              商品到着後14日以内であれば、未使用・未開封の商品に限り返品・交換を承ります。
+            </p>
+            <p class="checkout-page__policy-link">
+              <%- include('../atoms/link', {
+                href: '/help/returns',
+                text: '詳細はこちら',
+                className: 'checkout-page__policy-link-text'
+              }) %>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Back to Cart -->
+      <div class="checkout-page__back">
+        <%- include('../atoms/link', {
+          href: '/cart',
+          text: '← カートに戻る',
+          className: 'checkout-page__back-link'
+        }) %>
+      </div>
+    </div>
+  </div>
+<% } %>
+
+<!-- Page-specific script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Form validation
+    const orderForm = document.querySelector('.order-form__form');
+    if (orderForm) {
+      orderForm.addEventListener('submit', function(event) {
+        if (!validateOrderForm(this)) {
+          event.preventDefault();
+          scrollToFirstError();
+        } else {
+          // Show loading state
+          showCheckoutLoading();
+        }
+      });
+    }
+
+    // Auto-fill user data if logged in
+    <% if (userData) { %>
+      autoFillUserData({
+        email: '<%= userData.email || "" %>',
+        lastName: '<%= userData.lastName || "" %>',
+        firstName: '<%= userData.firstName || "" %>',
+        phone: '<%= userData.phone || "" %>',
+        postalCode: '<%= userData.postalCode || "" %>',
+        prefecture: '<%= userData.prefecture || "" %>',
+        city: '<%= userData.city || "" %>',
+        address: '<%= userData.address || "" %>'
+      });
+    <% } %>
+
+    // Address lookup by postal code
+    const postalCodeInput = document.getElementById('postalCode');
+    if (postalCodeInput) {
+      postalCodeInput.addEventListener('change', function() {
+        lookupAddress(this.value);
+      });
+    }
+
+    // Payment method change handler
+    const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+    paymentMethods.forEach(method => {
+      method.addEventListener('change', function() {
+        updatePaymentInfo(this.value);
+      });
+    });
+
+    // Shipping option change handler
+    const shippingOptions = document.querySelectorAll('input[name="shippingOption"]');
+    shippingOptions.forEach(option => {
+      option.addEventListener('change', function() {
+        updateShippingCost(this.value);
+      });
+    });
+  });
+
+  // Validate order form
+  function validateOrderForm(form) {
+    const requiredFields = form.querySelectorAll('[required]');
+    let isValid = true;
+
+    requiredFields.forEach(field => {
+      if (!field.value.trim()) {
+        markFieldError(field, '必須項目です');
+        isValid = false;
+      } else {
+        clearFieldError(field);
+      }
+    });
+
+    // Email validation
+    const emailField = form.querySelector('input[type="email"]');
+    if (emailField && emailField.value) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(emailField.value)) {
+        markFieldError(emailField, '正しいメールアドレスを入力してください');
+        isValid = false;
+      }
+    }
+
+    // Phone validation
+    const phoneField = form.querySelector('input[type="tel"]');
+    if (phoneField && phoneField.value) {
+      const phoneRegex = /^[0-9-+().\s]+$/;
+      if (!phoneRegex.test(phoneField.value)) {
+        markFieldError(phoneField, '正しい電話番号を入力してください');
+        isValid = false;
+      }
+    }
+
+    // Terms agreement
+    const termsCheckbox = form.querySelector('input[name="agreeToTerms"]');
+    if (termsCheckbox && !termsCheckbox.checked) {
+      markFieldError(termsCheckbox, '利用規約への同意が必要です');
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  // Show checkout loading state
+  function showCheckoutLoading() {
+    const submitButton = document.querySelector('.order-form__submit');
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = '処理中...';
+    }
+
+    // Show loading overlay
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (loadingOverlay) {
+      loadingOverlay.style.display = 'flex';
+    }
+  }
+
+  // Address lookup by postal code (mock implementation)
+  function lookupAddress(postalCode) {
+    if (!postalCode.match(/^\d{3}-\d{4}$/)) return;
+
+    // Mock address lookup - in real implementation, you'd call an API
+    const mockAddresses = {
+      '100-0001': { prefecture: '東京都', city: '千代田区' },
+      '150-0001': { prefecture: '東京都', city: '渋谷区' },
+      '530-0001': { prefecture: '大阪府', city: '大阪市北区' }
+    };
+
+    const address = mockAddresses[postalCode];
+    if (address) {
+      const prefectureSelect = document.getElementById('prefecture');
+      const cityInput = document.getElementById('city');
+
+      if (prefectureSelect) prefectureSelect.value = address.prefecture;
+      if (cityInput) cityInput.value = address.city;
+    }
+  }
+</script>
+<% } %>

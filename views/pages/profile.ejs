@@ -1,0 +1,412 @@
+<%
+/**
+ * User Profile Page
+ * @param {Object} user - ユーザー情報
+ * @param {Array} [recentOrders] - 最近の注文履歴
+ * @param {Object} [errors] - バリデーションエラー
+ * @param {Array} [messages] - 通知メッセージ
+ */
+const userData = user || {};
+const orderHistory = recentOrders || [];
+const formErrors = errors || {};
+const notifications = messages || [];
+
+// パンくずリスト
+const breadcrumbs = [
+  { href: '/', text: 'ホーム' },
+  { href: '/profile', text: 'マイページ' }
+];
+%>
+
+<% layout('./templates/base', {
+  title: 'マイページ',
+  description: 'アカウント情報の確認・変更、注文履歴の確認ができます。',
+  breadcrumbs: breadcrumbs,
+  bodyClass: 'page-profile',
+  errors: formErrors,
+  messages: notifications,
+  customScripts: ['/js/profile.js']
+}) %>
+
+<div class="profile-page">
+  <div class="profile-page__container">
+    <!-- Page Header -->
+    <header class="profile-page__header">
+      <h1 class="profile-page__title">マイページ</h1>
+      <p class="profile-page__welcome">
+        こんにちは、<strong><%= userData.name %></strong>さん
+      </p>
+    </header>
+
+    <!-- Profile Navigation -->
+    <nav class="profile-nav" role="navigation" aria-label="プロフィールメニュー">
+      <ul class="profile-nav__list">
+        <li class="profile-nav__item profile-nav__item--active">
+          <%- include('../atoms/link', {
+            href: '/profile',
+            text: 'アカウント情報',
+            className: 'profile-nav__link',
+            'aria-current': 'page'
+          }) %>
+        </li>
+        <li class="profile-nav__item">
+          <%- include('../atoms/link', {
+            href: '/orders',
+            text: '注文履歴',
+            className: 'profile-nav__link'
+          }) %>
+        </li>
+        <li class="profile-nav__item">
+          <%- include('../atoms/link', {
+            href: '/profile/wishlist',
+            text: 'お気に入り',
+            className: 'profile-nav__link'
+          }) %>
+        </li>
+        <li class="profile-nav__item">
+          <%- include('../atoms/link', {
+            href: '/profile/settings',
+            text: '設定',
+            className: 'profile-nav__link'
+          }) %>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="profile-page__content">
+      <!-- Account Information -->
+      <section class="profile-section">
+        <header class="profile-section__header">
+          <h2 class="profile-section__title">アカウント情報</h2>
+          <%- include('../atoms/button', {
+            type: 'secondary',
+            text: '編集',
+            onclick: 'toggleEditMode()',
+            className: 'profile-section__edit-btn',
+            id: 'edit-toggle'
+          }) %>
+        </header>
+
+        <form class="profile-form" action="/profile/update" method="POST" id="profile-form">
+          <div class="profile-form__grid">
+            <!-- 基本情報 -->
+            <fieldset class="profile-form__section">
+              <legend class="profile-form__section-title">基本情報</legend>
+
+              <div class="profile-form__row">
+                <!-- 姓 -->
+                <div class="profile-form__field">
+                  <%- include('../atoms/label', {
+                    text: '姓',
+                    htmlFor: 'lastName',
+                    className: 'profile-form__label'
+                  }) %>
+                  <%- include('../atoms/input', {
+                    type: 'text',
+                    name: 'lastName',
+                    id: 'lastName',
+                    value: userData.lastName || '',
+                    readonly: true,
+                    className: 'profile-form__input profile-form__input--readonly'
+                  }) %>
+                </div>
+
+                <!-- 名 -->
+                <div class="profile-form__field">
+                  <%- include('../atoms/label', {
+                    text: '名',
+                    htmlFor: 'firstName',
+                    className: 'profile-form__label'
+                  }) %>
+                  <%- include('../atoms/input', {
+                    type: 'text',
+                    name: 'firstName',
+                    id: 'firstName',
+                    value: userData.firstName || '',
+                    readonly: true,
+                    className: 'profile-form__input profile-form__input--readonly'
+                  }) %>
+                </div>
+              </div>
+
+              <!-- メールアドレス -->
+              <div class="profile-form__field">
+                <%- include('../atoms/label', {
+                  text: 'メールアドレス',
+                  htmlFor: 'email',
+                  className: 'profile-form__label'
+                }) %>
+                <%- include('../atoms/input', {
+                  type: 'email',
+                  name: 'email',
+                  id: 'email',
+                  value: userData.email || '',
+                  readonly: true,
+                  className: 'profile-form__input profile-form__input--readonly'
+                }) %>
+              </div>
+
+              <!-- 電話番号 -->
+              <div class="profile-form__field">
+                <%- include('../atoms/label', {
+                  text: '電話番号',
+                  htmlFor: 'phone',
+                  className: 'profile-form__label'
+                }) %>
+                <%- include('../atoms/input', {
+                  type: 'tel',
+                  name: 'phone',
+                  id: 'phone',
+                  value: userData.phone || '',
+                  readonly: true,
+                  className: 'profile-form__input profile-form__input--readonly'
+                }) %>
+              </div>
+            </fieldset>
+
+            <!-- 住所情報 -->
+            <fieldset class="profile-form__section">
+              <legend class="profile-form__section-title">住所情報</legend>
+
+              <!-- 郵便番号 -->
+              <div class="profile-form__field">
+                <%- include('../atoms/label', {
+                  text: '郵便番号',
+                  htmlFor: 'postalCode',
+                  className: 'profile-form__label'
+                }) %>
+                <%- include('../atoms/input', {
+                  type: 'text',
+                  name: 'postalCode',
+                  id: 'postalCode',
+                  value: userData.postalCode || '',
+                  readonly: true,
+                  className: 'profile-form__input profile-form__input--readonly'
+                }) %>
+              </div>
+
+              <div class="profile-form__row">
+                <!-- 都道府県 -->
+                <div class="profile-form__field">
+                  <%- include('../atoms/label', {
+                    text: '都道府県',
+                    htmlFor: 'prefecture',
+                    className: 'profile-form__label'
+                  }) %>
+                  <select
+                    name="prefecture"
+                    id="prefecture"
+                    disabled
+                    class="profile-form__select profile-form__select--readonly"
+                  >
+                    <option value=""><%= userData.prefecture || '未設定' %></option>
+                  </select>
+                </div>
+
+                <!-- 市区町村 -->
+                <div class="profile-form__field">
+                  <%- include('../atoms/label', {
+                    text: '市区町村',
+                    htmlFor: 'city',
+                    className: 'profile-form__label'
+                  }) %>
+                  <%- include('../atoms/input', {
+                    type: 'text',
+                    name: 'city',
+                    id: 'city',
+                    value: userData.city || '',
+                    readonly: true,
+                    className: 'profile-form__input profile-form__input--readonly'
+                  }) %>
+                </div>
+              </div>
+
+              <!-- 番地・建物名 -->
+              <div class="profile-form__field">
+                <%- include('../atoms/label', {
+                  text: '番地・建物名',
+                  htmlFor: 'address',
+                  className: 'profile-form__label'
+                }) %>
+                <%- include('../atoms/input', {
+                  type: 'text',
+                  name: 'address',
+                  id: 'address',
+                  value: userData.address || '',
+                  readonly: true,
+                  className: 'profile-form__input profile-form__input--readonly'
+                }) %>
+              </div>
+            </fieldset>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="profile-form__actions" style="display: none;" id="form-actions">
+            <%- include('../atoms/button', {
+              type: 'primary',
+              text: '保存する',
+              className: 'profile-form__save'
+            }) %>
+
+            <%- include('../atoms/button', {
+              type: 'secondary',
+              text: 'キャンセル',
+              onclick: 'cancelEdit()',
+              className: 'profile-form__cancel'
+            }) %>
+          </div>
+        </form>
+      </section>
+
+      <!-- Recent Orders -->
+      <% if (orderHistory.length > 0) { %>
+        <section class="profile-section">
+          <header class="profile-section__header">
+            <h2 class="profile-section__title">最近の注文</h2>
+            <%- include('../atoms/link', {
+              href: '/orders',
+              text: 'すべて見る →',
+              className: 'profile-section__view-all'
+            }) %>
+          </header>
+
+          <div class="recent-orders">
+            <% orderHistory.slice(0, 3).forEach(order => { %>
+              <article class="recent-orders__item">
+                <div class="recent-orders__header">
+                  <h3 class="recent-orders__number">
+                    注文番号: <%= order.orderNumber %>
+                  </h3>
+                  <time class="recent-orders__date">
+                    <%= new Date(order.createdAt).toLocaleDateString('ja-JP') %>
+                  </time>
+                </div>
+
+                <div class="recent-orders__content">
+                  <div class="recent-orders__items">
+                    <% order.items.slice(0, 2).forEach(item => { %>
+                      <div class="recent-orders__product">
+                        <%- include('../atoms/image', {
+                          src: item.product.image || '/images/no-image.jpg',
+                          alt: item.product.name,
+                          className: 'recent-orders__product-img',
+                          width: '50',
+                          height: '50'
+                        }) %>
+                        <span class="recent-orders__product-name">
+                          <%= item.product.name %>
+                        </span>
+                      </div>
+                    <% }); %>
+                    <% if (order.items.length > 2) { %>
+                      <span class="recent-orders__more">
+                        他<%= order.items.length - 2 %>点
+                      </span>
+                    <% } %>
+                  </div>
+
+                  <div class="recent-orders__summary">
+                    <div class="recent-orders__total">
+                      合計: ¥<%= order.totalAmount.toLocaleString() %>
+                    </div>
+                    <div class="recent-orders__status">
+                      <span class="recent-orders__status-badge recent-orders__status-badge--<%= order.status %>">
+                        <%= order.statusText %>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="recent-orders__actions">
+                  <%- include('../atoms/link', {
+                    href: '/orders/' + order.id,
+                    text: '詳細を見る',
+                    className: 'recent-orders__detail-link'
+                  }) %>
+
+                  <% if (order.status === 'delivered') { %>
+                    <%- include('../atoms/button', {
+                      type: 'secondary',
+                      text: '再注文',
+                      onclick: "reorder('" + order.id + "')",
+                      size: 'small',
+                      className: 'recent-orders__reorder'
+                    }) %>
+                  <% } %>
+                </div>
+              </article>
+            <% }); %>
+          </div>
+        </section>
+      <% } %>
+
+      <!-- Account Stats -->
+      <section class="profile-section">
+        <h2 class="profile-section__title">アカウント統計</h2>
+        <div class="account-stats">
+          <div class="account-stats__item">
+            <div class="account-stats__number">
+              <%= userData.totalOrders || 0 %>
+            </div>
+            <div class="account-stats__label">総注文数</div>
+          </div>
+
+          <div class="account-stats__item">
+            <div class="account-stats__number">
+              ¥<%= (userData.totalSpent || 0).toLocaleString() %>
+            </div>
+            <div class="account-stats__label">総購入金額</div>
+          </div>
+
+          <div class="account-stats__item">
+            <div class="account-stats__number">
+              <%= userData.wishlistCount || 0 %>
+            </div>
+            <div class="account-stats__label">お気に入り商品</div>
+          </div>
+
+          <div class="account-stats__item">
+            <div class="account-stats__number">
+              <%= Math.floor((Date.now() - new Date(userData.createdAt).getTime()) / (1000 * 60 * 60 * 24)) %>
+            </div>
+            <div class="account-stats__label">利用日数</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Actions -->
+      <section class="profile-section">
+        <h2 class="profile-section__title">クイックアクション</h2>
+        <div class="quick-actions">
+          <%- include('../atoms/button', {
+            type: 'primary',
+            text: '商品を探す',
+            href: '/products',
+            className: 'quick-actions__button'
+          }) %>
+
+          <%- include('../atoms/button', {
+            type: 'secondary',
+            text: 'お気に入りを見る',
+            href: '/profile/wishlist',
+            className: 'quick-actions__button'
+          }) %>
+
+          <%- include('../atoms/button', {
+            type: 'secondary',
+            text: 'パスワード変更',
+            href: '/profile/password',
+            className: 'quick-actions__button'
+          }) %>
+
+          <%- include('../atoms/button', {
+            type: 'outline',
+            text: 'ログアウト',
+            href: '/auth/logout',
+            className: 'quick-actions__button'
+          }) %>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

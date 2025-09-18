@@ -1,0 +1,149 @@
+<%
+/**
+ * RegistrationForm Molecule Component
+ * @param {string} [action] - フォームのaction属性
+ * @param {string} [method] - HTTPメソッド
+ * @param {string} [usernameValue] - ユーザー名の初期値
+ * @param {string} [emailValue] - メールアドレスの初期値
+ * @param {Object} [errors] - エラーメッセージオブジェクト
+ * @param {string} [class] - 追加CSSクラス
+ * @param {string} [id] - ID属性
+ */
+const formAction = typeof action !== 'undefined' ? action : '/auth/register';
+const formMethod = typeof method !== 'undefined' ? method : 'POST';
+const usernameValueData = typeof usernameValue !== 'undefined' ? usernameValue : '';
+const emailValueData = typeof emailValue !== 'undefined' ? emailValue : '';
+const formErrors = typeof errors !== 'undefined' ? errors : {};
+const additionalClass = typeof className !== 'undefined' ? className : '';
+const formId = typeof id !== 'undefined' ? id : 'registration-form';
+%>
+
+<form
+  id="<%= formId %>"
+  action="<%= formAction %>"
+  method="<%= formMethod %>"
+  class="registration-form <%= additionalClass %>"
+  novalidate
+>
+  <!-- CSRF Token -->
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+  <div class="registration-form__field">
+    <%- include('../atoms/label', {
+      text: 'ユーザー名',
+      htmlFor: 'username',
+      required: true,
+      className: 'registration-form__label'
+    }) %>
+
+    <%- include('../atoms/input', {
+      type: 'text',
+      name: 'username',
+      id: 'username',
+      placeholder: 'ユーザー名を入力',
+      value: usernameValueData,
+      required: true,
+      autocomplete: 'username',
+      className: 'registration-form__input' + (formErrors.username ? ' registration-form__input--error' : '')
+    }) %>
+
+    <% if (formErrors.username) { %>
+      <span class="registration-form__error" role="alert">
+        <%= formErrors.username %>
+      </span>
+    <% } %>
+  </div>
+
+  <div class="registration-form__field">
+    <%- include('../atoms/label', {
+      text: 'メールアドレス',
+      htmlFor: 'email',
+      required: true,
+      className: 'registration-form__label'
+    }) %>
+
+    <%- include('../atoms/input', {
+      type: 'email',
+      name: 'email',
+      id: 'email',
+      placeholder: 'example@email.com',
+      value: emailValueData,
+      required: true,
+      autocomplete: 'email',
+      className: 'registration-form__input' + (formErrors.email ? ' registration-form__input--error' : '')
+    }) %>
+
+    <% if (formErrors.email) { %>
+      <span class="registration-form__error" role="alert">
+        <%= formErrors.email %>
+      </span>
+    <% } %>
+  </div>
+
+  <div class="registration-form__field">
+    <%- include('../atoms/label', {
+      text: 'パスワード',
+      htmlFor: 'password',
+      required: true,
+      className: 'registration-form__label'
+    }) %>
+
+    <%- include('../atoms/input', {
+      type: 'password',
+      name: 'password',
+      id: 'password',
+      placeholder: '8文字以上のパスワードを入力',
+      required: true,
+      autocomplete: 'new-password',
+      className: 'registration-form__input' + (formErrors.password ? ' registration-form__input--error' : '')
+    }) %>
+
+    <% if (formErrors.password) { %>
+      <span class="registration-form__error" role="alert">
+        <%= formErrors.password %>
+      </span>
+    <% } %>
+  </div>
+
+  <div class="registration-form__field">
+    <%- include('../atoms/label', {
+      text: 'パスワード（確認用）',
+      htmlFor: 'confirmPassword',
+      required: true,
+      className: 'registration-form__label'
+    }) %>
+
+    <%- include('../atoms/input', {
+      type: 'password',
+      name: 'confirmPassword',
+      id: 'confirmPassword',
+      placeholder: 'パスワードを再入力',
+      required: true,
+      autocomplete: 'new-password',
+      className: 'registration-form__input' + (formErrors.confirmPassword ? ' registration-form__input--error' : '')
+    }) %>
+
+    <% if (formErrors.confirmPassword) { %>
+      <span class="registration-form__error" role="alert">
+        <%= formErrors.confirmPassword %>
+      </span>
+    <% } %>
+  </div>
+
+  <div class="registration-form__actions">
+    <%- include('../atoms/button', {
+      type: 'primary',
+      text: 'アカウントを作成',
+      formId: formId,
+      className: 'registration-form__submit'
+    }) %>
+  </div>
+
+  <div class="registration-form__links">
+    <%- include('../atoms/link', {
+      href: '/auth/login',
+      text: 'すでにアカウントをお持ちの方はこちら',
+      className: 'registration-form__login-link'
+    }) %>
+  </div>
+</form>

@@ -1,0 +1,106 @@
+<%
+/**
+ * Head Partial Component
+ * @param {string} title - ページタイトル
+ * @param {string} [description] - メタディスクリプション
+ * @param {string} [keywords] - メタキーワード
+ * @param {string} [canonicalUrl] - カノニカルURL
+ * @param {Object} [ogp] - OGP情報
+ */
+const pageTitle = typeof title !== 'undefined' ? title : 'ECサイト';
+const siteTitle = 'ECサイト学習プロジェクト';
+const fullTitle = pageTitle === siteTitle ? siteTitle : `${pageTitle} | ${siteTitle}`;
+const metaDescription = typeof description !== 'undefined' ? description : 'TypeScriptで学ぶクリーンアーキテクチャとアトミックデザインのECサイト';
+const metaKeywords = typeof keywords !== 'undefined' ? keywords : 'ECサイト,TypeScript,クリーンアーキテクチャ,アトミックデザイン';
+const canonical = typeof canonicalUrl !== 'undefined' ? canonicalUrl : '';
+const ogpData = typeof ogp !== 'undefined' ? ogp : {};
+%>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Basic Meta Tags -->
+<title><%= fullTitle %></title>
+<meta name="description" content="<%= metaDescription %>">
+<meta name="keywords" content="<%= metaKeywords %>">
+<meta name="author" content="ECサイト学習プロジェクト">
+
+<!-- Canonical URL -->
+<% if (canonical) { %>
+  <link rel="canonical" href="<%= canonical %>">
+<% } %>
+
+<!-- Favicon -->
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+<!-- OGP Meta Tags -->
+<meta property="og:type" content="<%= ogpData.type || 'website' %>">
+<meta property="og:title" content="<%= ogpData.title || fullTitle %>">
+<meta property="og:description" content="<%= ogpData.description || metaDescription %>">
+<meta property="og:url" content="<%= ogpData.url || canonical %>">
+<meta property="og:site_name" content="<%= siteTitle %>">
+<% if (ogpData.image) { %>
+  <meta property="og:image" content="<%= ogpData.image %>">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+<% } %>
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="<%= ogpData.title || fullTitle %>">
+<meta name="twitter:description" content="<%= ogpData.description || metaDescription %>">
+<% if (ogpData.image) { %>
+  <meta name="twitter:image" content="<%= ogpData.image %>">
+<% } %>
+
+<!-- CSS Files -->
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/atoms.css">
+<link rel="stylesheet" href="/css/molecules.css">
+<link rel="stylesheet" href="/css/organisms.css">
+<link rel="stylesheet" href="/css/templates.css">
+
+<!-- Preconnect for Performance -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<!-- Security Headers -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self';">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+
+<!-- CSRF Token for JavaScript -->
+<% if (typeof csrfToken !== 'undefined') { %>
+  <meta name="csrf-token" content="<%= csrfToken %>">
+<% } %>
+
+<!-- Theme Color -->
+<meta name="theme-color" content="#2563eb">
+<meta name="msapplication-TileColor" content="#2563eb">
+
+<!-- Robots -->
+<meta name="robots" content="index, follow">
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "<%= siteTitle %>",
+  "description": "<%= metaDescription %>",
+  "url": "<%= canonical || 'https://example.com' %>",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "<%= canonical || 'https://example.com' %>/products?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>

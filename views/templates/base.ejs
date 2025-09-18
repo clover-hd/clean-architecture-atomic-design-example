@@ -1,0 +1,137 @@
+<%
+/**
+ * Base Layout Template
+ * @param {string} title - ページタイトル
+ * @param {string} [description] - メタディスクリプション
+ * @param {Object} [user] - ログインユーザー情報
+ * @param {number} [cartCount] - カート商品数
+ * @param {string} [currentPath] - 現在のパス
+ * @param {Object} [errors] - エラーメッセージ
+ * @param {Array} [messages] - 通知メッセージ
+ * @param {string} [messageType] - メッセージタイプ
+ * @param {Array} [customScripts] - カスタムスクリプト
+ * @param {string} [bodyClass] - body要素のクラス
+ */
+let pageTitle = 'ECサイト';
+let metaDescription = '';
+let userData = null;
+let cartItemCount = 0;
+let currentUrl = '';
+let errorData = {};
+let messageList = [];
+let msgType = 'info';
+let scripts = [];
+let additionalBodyClass = '';
+
+if (typeof title != 'undefined') pageTitle = title;
+if (typeof description != 'undefined') metaDescription = description;
+if (typeof user != 'undefined') userData = user;
+if (typeof cartCount != 'undefined') cartItemCount = cartCount;
+if (typeof currentPath != 'undefined') currentUrl = currentPath;
+if (typeof errors != 'undefined') errorData = errors;
+if (typeof messages != 'undefined') messageList = messages;
+if (typeof messageType != 'undefined') msgType = messageType;
+if (typeof customScripts != 'undefined') scripts = customScripts;
+if (typeof bodyClass != 'undefined') additionalBodyClass = bodyClass;
+%>
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <%- include('../partials/head', {
+    title: pageTitle,
+    description: metaDescription,
+    canonicalUrl: process.env.BASE_URL + currentUrl
+  }) %>
+</head>
+
+<body class="<%= additionalBodyClass %>">
+  <!-- Skip Link for Accessibility -->
+  <a href="#main-content" class="skip-link">メインコンテンツへ移動</a>
+
+  <!-- Page Wrapper -->
+  <div class="page-wrapper">
+    <!-- Header -->
+    <%- include('../organisms/header', {
+      user: userData,
+      cartCount: cartItemCount,
+      currentPath: currentUrl
+    }) %>
+
+    <!-- Flash Messages -->
+    <% if (Object.keys(errorData).length > 0) { %>
+      <%- include('../partials/error-messages', {
+        errors: errorData,
+        type: 'error'
+      }) %>
+    <% } %>
+
+    <% if (messageList.length > 0) { %>
+      <%- include('../partials/error-messages', {
+        messages: messageList,
+        type: msgType
+      }) %>
+    <% } %>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content" role="main">
+      <!-- Breadcrumb Navigation -->
+      <% if (typeof breadcrumbs !== 'undefined' && breadcrumbs.length > 0) { %>
+        <nav class="breadcrumb" aria-label="パンくずリスト">
+          <div class="breadcrumb__container">
+            <ol class="breadcrumb__list">
+              <% breadcrumbs.forEach((crumb, index) => { %>
+                <li class="breadcrumb__item">
+                  <% if (index === breadcrumbs.length - 1) { %>
+                    <span class="breadcrumb__current" aria-current="page">
+                      <%= crumb.text %>
+                    </span>
+                  <% } else { %>
+                    <%- include('../atoms/link', {
+                      href: crumb.href,
+                      text: crumb.text,
+                      className: 'breadcrumb__link'
+                    }) %>
+                  <% } %>
+                  <% if (index < breadcrumbs.length - 1) { %>
+                    <span class="breadcrumb__separator" aria-hidden="true">></span>
+                  <% } %>
+                </li>
+              <% }); %>
+            </ol>
+          </div>
+        </nav>
+      <% } %>
+
+      <!-- Page Content -->
+      <div class="page-content">
+        <%- body %>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <%- include('../organisms/footer') %>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-overlay" style="display: none;" aria-hidden="true">
+    <div class="loading-overlay__spinner"></div>
+    <p class="loading-overlay__text">読み込み中...</p>
+  </div>
+
+  <!-- Modal Container -->
+  <div id="modal-container" class="modal-container" style="display: none;" aria-hidden="true"></div>
+
+  <!-- Scripts -->
+  <%- include('../partials/scripts', {
+    customScripts: scripts
+  }) %>
+
+  <!-- Page-specific inline scripts -->
+  <% if (typeof pageScript !== 'undefined') { %>
+    <script>
+      <%- pageScript %>
+    </script>
+  <% } %>
+</body>
+</html>

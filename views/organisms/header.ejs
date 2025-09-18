@@ -1,0 +1,164 @@
+<%
+/**
+ * Header Organism Component
+ * @param {Object} [user] - ログインユーザー情報
+ * @param {number} [cartCount] - カート商品数
+ * @param {string} [currentPath] - 現在のパス（ナビゲーション強調用）
+ * @param {string} [class] - 追加CSSクラス
+ */
+let userData = null;
+let cartItemCount = 0;
+let currentUrl = '';
+let additionalClass = '';
+
+if (user) userData = user;
+if (cartCount) cartItemCount = cartCount;
+if (currentPath) currentUrl = currentPath;
+if (locals.class) additionalClass = locals.class;
+const isLoggedIn = !!userData;
+
+// ナビゲーションメニューの定義
+const navigation = [
+  { href: '/', text: 'ホーム', active: currentUrl === '/' },
+  { href: '/products', text: '商品一覧', active: currentUrl.startsWith('/products') },
+  { href: '/cart', text: 'カート', active: currentUrl === '/cart' },
+];
+
+const userNavigation = isLoggedIn
+  ? [
+      { href: '/profile', text: 'マイページ', active: currentUrl === '/profile' },
+      { href: '/orders', text: '注文履歴', active: currentUrl === '/orders' },
+      { href: '/auth/logout', text: 'ログアウト', active: false }
+    ]
+  : [
+      { href: '/auth/login', text: 'ログイン', active: currentUrl === '/auth/login' },
+      { href: '/auth/register', text: '新規登録', active: currentUrl === '/auth/register' }
+    ];
+%>
+
+<header class="header <%= additionalClass %>" role="banner">
+  <div class="header__container">
+    <!-- ロゴ・サイトタイトル -->
+    <div class="header__brand">
+      <%- include('../atoms/link', {
+        href: '/',
+        text: 'ECサイト',
+        className: 'header__logo',
+        title: 'ホームページに戻る'
+      }) %>
+    </div>
+
+    <!-- メインナビゲーション -->
+    <nav class="header__nav" role="navigation" aria-label="メインナビゲーション">
+      <ul class="header__nav-list">
+        <% navigation.forEach(item => { %>
+          <li class="header__nav-item">
+            <%- include('../atoms/link', {
+              href: item.href,
+              text: item.text,
+              className: 'header__nav-link' + (item.active ? ' header__nav-link--active' : ''),
+              ariaCurrent: item.active ? 'page' : undefined
+            }) %>
+          </li>
+        <% }); %>
+      </ul>
+    </nav>
+
+    <!-- 検索フォーム -->
+    <div class="header__search">
+      <%- include('../molecules/search-form', {
+        className: 'header__search-form',
+        placeholder: '商品検索...',
+        buttonText: '検索'
+      }) %>
+    </div>
+
+    <!-- ユーザーアクション -->
+    <div class="header__actions">
+      <!-- カート -->
+      <div class="header__cart">
+        <a href="/cart" class="header__cart-link" title="カートを見る">
+          <span class="header__cart-icon" aria-hidden="true">🛒</span>
+          <span class="header__cart-text">カート</span>
+          <% if (cartItemCount > 0) { %>
+            <span class="header__cart-count" aria-label="<%= cartItemCount %>個の商品">
+              <%= cartItemCount %>
+            </span>
+          <% } %>
+        </a>
+      </div>
+
+      <!-- ユーザーメニュー -->
+      <nav class="header__user-nav" role="navigation" aria-label="ユーザーメニュー">
+        <% if (isLoggedIn) { %>
+          <div class="header__user-menu">
+            <button class="header__user-toggle" aria-expanded="false" aria-haspopup="true">
+              <span class="header__user-icon" aria-hidden="true">👤</span>
+              <span class="header__user-name"><%= userData.name %></span>
+              <span class="header__user-arrow" aria-hidden="true">▼</span>
+            </button>
+            <ul class="header__user-dropdown" role="menu">
+              <% userNavigation.forEach(item => { %>
+                <li class="header__user-dropdown-item" role="none">
+                  <%- include('../atoms/link', {
+                    href: item.href,
+                    text: item.text,
+                    className: 'header__user-dropdown-link',
+                    role: 'menuitem'
+                  }) %>
+                </li>
+              <% }); %>
+            </ul>
+          </div>
+        <% } else { %>
+          <ul class="header__auth-links">
+            <% userNavigation.forEach(item => { %>
+              <li class="header__auth-item">
+                <%- include('../atoms/link', {
+                  href: item.href,
+                  text: item.text,
+                  className: 'header__auth-link' + (item.active ? ' header__auth-link--active' : '')
+                }) %>
+              </li>
+            <% }); %>
+          </ul>
+        <% } %>
+      </nav>
+    </div>
+
+    <!-- モバイルメニューボタン -->
+    <button class="header__mobile-toggle" aria-expanded="false" aria-controls="mobile-menu">
+      <span class="header__mobile-toggle-bar"></span>
+      <span class="header__mobile-toggle-bar"></span>
+      <span class="header__mobile-toggle-bar"></span>
+      <span class="header__mobile-toggle-text">メニュー</span>
+    </button>
+  </div>
+
+  <!-- モバイルメニュー -->
+  <div class="header__mobile-menu" id="mobile-menu" aria-hidden="true">
+    <nav class="header__mobile-nav" role="navigation" aria-label="モバイルナビゲーション">
+      <ul class="header__mobile-nav-list">
+        <% navigation.forEach(item => { %>
+          <li class="header__mobile-nav-item">
+            <%- include('../atoms/link', {
+              href: item.href,
+              text: item.text,
+              className: 'header__mobile-nav-link' + (item.active ? ' header__mobile-nav-link--active' : '')
+            }) %>
+          </li>
+        <% }); %>
+
+        <% userNavigation.forEach(item => { %>
+          <li class="header__mobile-nav-item">
+            <%- include('../atoms/link', {
+              href: item.href,
+              text: item.text,
+              className: 'header__mobile-nav-link'
+            }) %>
+          </li>
+        <% }); %>
+      </ul>
+    </nav>
+  </div>
+</header>

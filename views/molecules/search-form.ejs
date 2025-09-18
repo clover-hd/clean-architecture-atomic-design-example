@@ -1,0 +1,46 @@
+<%
+/**
+ * SearchForm Molecule Component
+ * @param {string} [action] - フォームのaction属性
+ * @param {string} [method] - HTTPメソッド (GET|POST)
+ * @param {string} [placeholder] - 検索ボックスプレースホルダー
+ * @param {string} [value] - 検索値の初期値
+ * @param {string} [buttonText] - 検索ボタンテキスト
+ * @param {string} [class] - 追加CSSクラス
+ * @param {string} [id] - ID属性
+ */
+const formAction = (typeof action !== 'undefined') ? action : '/products';
+const formMethod = (typeof method !== 'undefined') ? method : 'GET';
+const searchPlaceholder = (typeof placeholder !== 'undefined') ? placeholder : '商品を検索...';
+const searchValue = (typeof value !== 'undefined') ? value : '';
+const searchButtonText = (typeof buttonText !== 'undefined') ? buttonText : '検索';
+const additionalClass = (typeof locals.class !== 'undefined') ? locals.class : '';
+const formId = (typeof id !== 'undefined') ? id : 'search-form';
+%>
+
+<form
+  id="<%= formId %>"
+  action="<%= formAction %>"
+  method="<%= formMethod %>"
+  class="search-form <%= additionalClass %>"
+  role="search"
+>
+  <div class="search-form__container">
+    <%- include('../atoms/input', {
+      type: 'search',
+      name: 'q',
+      id: 'search-input',
+      placeholder: searchPlaceholder,
+      value: searchValue,
+      className: 'search-form__input',
+      autocomplete: 'off'
+    }) %>
+
+    <%- include('../atoms/button', {
+      type: 'primary',
+      text: searchButtonText,
+      formId: formId,
+      className: 'search-form__button'
+    }) %>
+  </div>
+</form>

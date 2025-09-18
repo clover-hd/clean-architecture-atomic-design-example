@@ -1,0 +1,274 @@
+<%
+/**
+ * Cart Page
+ * @param {Object} cart - カート情報
+ * @param {Object} [user] - ログインユーザー情報
+ */
+const cartData = cart || {};
+const userData = user || null;
+
+// パンくずリスト
+const breadcrumbs = [
+  { href: '/', text: 'ホーム' },
+  { href: '/cart', text: 'ショッピングカート' }
+];
+
+const isEmpty = !cartData.items || cartData.items.length === 0;
+%>
+
+<% layout('./templates/base', {
+  title: 'ショッピングカート',
+  description: 'ショッピングカートの内容を確認し、お会計にお進みください。',
+  breadcrumbs: breadcrumbs,
+  bodyClass: 'page-cart',
+  customScripts: ['/js/cart.js']
+}) %>
+
+<div class="cart-page">
+  <div class="cart-page__container">
+    <!-- Page Header -->
+    <header class="cart-page__header">
+      <h1 class="cart-page__title">ショッピングカート</h1>
+      <% if (!isEmpty) { %>
+        <p class="cart-page__item-count">
+          <%= cartData.items.length %>種類の商品
+        </p>
+      <% } %>
+    </header>
+
+    <% if (isEmpty) { %>
+      <!-- Empty Cart -->
+      <div class="cart-page__empty">
+        <div class="cart-page__empty-content">
+          <div class="cart-page__empty-icon">🛒</div>
+          <h2 class="cart-page__empty-title">カートは空です</h2>
+          <p class="cart-page__empty-description">
+            商品をカートに追加して、お買い物をお楽しみください。
+          </p>
+          <div class="cart-page__empty-actions">
+            <%- include('../atoms/button', {
+              type: 'primary',
+              text: '商品を見る',
+              href: '/products',
+              size: 'large',
+              className: 'cart-page__shop-button'
+            }) %>
+          </div>
+        </div>
+      </div>
+    <% } else { %>
+      <!-- Cart Content -->
+      <div class="cart-page__content">
+        <!-- Cart Items -->
+        <div class="cart-page__items">
+          <%- include('../organisms/cart-table', {
+            cart: cartData,
+            editable: true,
+            className: 'cart-page__table'
+          }) %>
+        </div>
+
+        <!-- Cart Summary -->
+        <div class="cart-page__summary">
+          <%- include('../molecules/cart-summary', {
+            cart: cartData,
+            showCheckout: true,
+            className: 'cart-page__summary-widget'
+          }) %>
+
+          <!-- Promo Code -->
+          <div class="cart-page__promo">
+            <h3 class="cart-page__promo-title">プロモーションコード</h3>
+            <form class="cart-page__promo-form" action="/cart/promo" method="POST">
+              <div class="cart-page__promo-input-group">
+                <%- include('../atoms/input', {
+                  type: 'text',
+                  name: 'promoCode',
+                  placeholder: 'プロモーションコードを入力',
+                  className: 'cart-page__promo-input'
+                }) %>
+
+                <%- include('../atoms/button', {
+                  type: 'secondary',
+                  text: '適用',
+                  className: 'cart-page__promo-button'
+                }) %>
+              </div>
+            </form>
+          </div>
+
+          <!-- Security Badges -->
+          <div class="cart-page__security">
+            <h4 class="cart-page__security-title">安心・安全なお買い物</h4>
+            <div class="cart-page__security-badges">
+              <div class="cart-page__security-badge">
+                <span class="cart-page__security-icon">🔒</span>
+                <span class="cart-page__security-text">SSL暗号化</span>
+              </div>
+              <div class="cart-page__security-badge">
+                <span class="cart-page__security-icon">🛡️</span>
+                <span class="cart-page__security-text">個人情報保護</span>
+              </div>
+              <div class="cart-page__security-badge">
+                <span class="cart-page__security-icon">📞</span>
+                <span class="cart-page__security-text">サポート対応</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommended Products -->
+      <section class="cart-page__recommendations">
+        <div class="cart-page__recommendations-header">
+          <h2 class="cart-page__recommendations-title">こちらもいかがですか？</h2>
+          <p class="cart-page__recommendations-description">
+            カートの商品と一緒によく購入される商品
+          </p>
+        </div>
+
+        <div class="cart-page__recommendations-grid" id="recommended-products">
+          <!-- Recommended products will be loaded here via JavaScript -->
+        </div>
+      </section>
+
+      <!-- Cart Actions Footer -->
+      <div class="cart-page__actions">
+        <div class="cart-page__actions-container">
+          <div class="cart-page__continue-shopping">
+            <%- include('../atoms/link', {
+              href: '/products',
+              text: '← 買い物を続ける',
+              className: 'cart-page__continue-link'
+            }) %>
+          </div>
+
+          <div class="cart-page__checkout-actions">
+            <% if (!userData) { %>
+              <p class="cart-page__login-prompt">
+                <%- include('../atoms/link', {
+                  href: '/auth/login?redirect=/cart',
+                  text: 'ログイン',
+                  className: 'cart-page__login-link'
+                }) %>
+                してスムーズにお会計
+              </p>
+            <% } %>
+
+            <%- include('../atoms/button', {
+              type: 'primary',
+              text: 'レジに進む',
+              href: '/checkout',
+              size: 'large',
+              className: 'cart-page__checkout-button'
+            }) %>
+          </div>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- Help Information -->
+    <aside class="cart-page__help">
+      <h3 class="cart-page__help-title">お困りですか？</h3>
+      <ul class="cart-page__help-list">
+        <li class="cart-page__help-item">
+          <%- include('../atoms/link', {
+            href: '/help/shipping',
+            text: '配送について',
+            className: 'cart-page__help-link'
+          }) %>
+        </li>
+        <li class="cart-page__help-item">
+          <%- include('../atoms/link', {
+            href: '/help/returns',
+            text: '返品・交換について',
+            className: 'cart-page__help-link'
+          }) %>
+        </li>
+        <li class="cart-page__help-item">
+          <%- include('../atoms/link', {
+            href: '/help/payment',
+            text: 'お支払い方法について',
+            className: 'cart-page__help-link'
+          }) %>
+        </li>
+        <li class="cart-page__help-item">
+          <%- include('../atoms/link', {
+            href: '/contact',
+            text: 'お問い合わせ',
+            className: 'cart-page__help-link'
+          }) %>
+        </li>
+      </ul>
+    </aside>
+  </div>
+</div>
+
+<!-- Page-specific script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Load recommended products
+    if (!<%= isEmpty %>) {
+      loadRecommendedProducts();
+    }
+
+    // Cart update animations
+    const cartTable = document.querySelector('.cart-page__table');
+    if (cartTable) {
+      cartTable.addEventListener('cartUpdated', function(event) {
+        // Animate cart updates
+        const updatedRow = event.target.closest('.cart-table__row');
+        if (updatedRow) {
+          updatedRow.classList.add('cart-table__row--updated');
+          setTimeout(() => {
+            updatedRow.classList.remove('cart-table__row--updated');
+          }, 1000);
+        }
+      });
+    }
+  });
+
+  // Load recommended products
+  function loadRecommendedProducts() {
+    const container = document.getElementById('recommended-products');
+    if (!container) return;
+
+    // Show loading state
+    container.innerHTML = '<div class="cart-page__recommendations-loading">読み込み中...</div>';
+
+    // Fetch recommended products
+    fetch('/api/cart/recommendations')
+      .then(response => response.json())
+      .then(data => {
+        if (data.products && data.products.length > 0) {
+          renderRecommendedProducts(data.products, container);
+        } else {
+          container.style.display = 'none';
+        }
+      })
+      .catch(error => {
+        console.error('Failed to load recommendations:', error);
+        container.style.display = 'none';
+      });
+  }
+
+  // Render recommended products
+  function renderRecommendedProducts(products, container) {
+    container.innerHTML = products.slice(0, 4).map(product => `
+      <div class="cart-page__recommendation-item">
+        <a href="/products/${product.id}" class="cart-page__recommendation-link">
+          <img src="${product.image || '/images/no-image.jpg'}"
+               alt="${product.name}"
+               class="cart-page__recommendation-image">
+          <h4 class="cart-page__recommendation-name">${product.name}</h4>
+          <p class="cart-page__recommendation-price">¥${product.price.toLocaleString()}</p>
+        </a>
+        <button class="cart-page__recommendation-add"
+                onclick="addToCart('${product.id}', 1)"
+                ${product.stock <= 0 ? 'disabled' : ''}>
+          ${product.stock <= 0 ? '在庫切れ' : 'カートに追加'}
+        </button>
+      </div>
+    `).join('');
+  }
+</script>

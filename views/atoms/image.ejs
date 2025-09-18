@@ -1,0 +1,36 @@
+<%
+/**
+ * Image Atom Component
+ * @param {string} src - 画像URL
+ * @param {string} alt - 代替テキスト
+ * @param {string} [width] - 幅
+ * @param {string} [height] - 高さ
+ * @param {string} [class] - 追加CSSクラス
+ * @param {string} [id] - ID属性
+ * @param {boolean} [lazy] - 遅延読み込みフラグ
+ * @param {string} [sizes] - sizes属性（レスポンシブ）
+ * @param {string} [srcset] - srcset属性（レスポンシブ）
+ */
+// Use safe variable assignment for EJS compatibility
+var imgSrc = (typeof src !== 'undefined' && src) ? src : '';
+var imgAlt = (typeof alt !== 'undefined' && alt) ? alt : '';
+var imgWidth = (typeof width !== 'undefined' && width) ? width : '';
+var imgHeight = (typeof height !== 'undefined' && height) ? height : '';
+var additionalClass = (typeof className !== 'undefined' && className) ? className : '';
+var imgId = (typeof id !== 'undefined' && id) ? id : '';
+var isLazy = (typeof lazy !== 'undefined') ? lazy : false;
+var imgSizes = (typeof sizes !== 'undefined' && sizes) ? sizes : '';
+var imgSrcset = (typeof srcset !== 'undefined' && srcset) ? srcset : '';
+%>
+
+<img
+  src="<%= imgSrc %>"
+  alt="<%= imgAlt %>"
+  <% if (imgId) { %>id="<%= imgId %>"<% } %>
+  class="image <%= additionalClass %>"
+  <% if (imgWidth) { %>width="<%= imgWidth %>"<% } %>
+  <% if (imgHeight) { %>height="<%= imgHeight %>"<% } %>
+  <% if (isLazy) { %>loading="lazy"<% } %>
+  <% if (imgSizes) { %>sizes="<%= imgSizes %>"<% } %>
+  <% if (imgSrcset) { %>srcset="<%= imgSrcset %>"<% } %>
+/>

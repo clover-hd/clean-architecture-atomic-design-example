@@ -1,0 +1,61 @@
+<%
+/**
+ * ErrorMessages Partial Component
+ * @param {Object} [errors] - エラーメッセージオブジェクト
+ * @param {Array} [messages] - メッセージ配列
+ * @param {string} [type] - メッセージタイプ (error|warning|success|info)
+ */
+const errorData = typeof errors !== 'undefined' ? errors : {};
+const messageList = typeof messages !== 'undefined' ? messages : [];
+const messageType = typeof type !== 'undefined' ? type : 'error';
+
+// エラーオブジェクトを配列に変換
+const errorMessages = Object.keys(errorData).length > 0
+  ? Object.values(errorData).flat()
+  : [];
+
+// 表示するメッセージの統合
+const allMessages = [...errorMessages, ...messageList].filter(Boolean);
+%>
+
+<% if (allMessages.length > 0) { %>
+  <div class="error-messages error-messages--<%= messageType %>" role="alert">
+    <div class="error-messages__container">
+      <div class="error-messages__icon" aria-hidden="true">
+        <% if (messageType === 'error') { %>
+          ❌
+        <% } else if (messageType === 'warning') { %>
+          ⚠️
+        <% } else if (messageType === 'success') { %>
+          ✅
+        <% } else { %>
+          ℹ️
+        <% } %>
+      </div>
+
+      <div class="error-messages__content">
+        <% if (allMessages.length === 1) { %>
+          <p class="error-messages__text">
+            <%= allMessages[0] %>
+          </p>
+        <% } else { %>
+          <ul class="error-messages__list">
+            <% allMessages.forEach(message => { %>
+              <li class="error-messages__item">
+                <%= message %>
+              </li>
+            <% }); %>
+          </ul>
+        <% } %>
+      </div>
+
+      <button
+        class="error-messages__close"
+        onclick="this.parentElement.parentElement.style.display='none'"
+        aria-label="メッセージを閉じる"
+      >
+        ×
+      </button>
+    </div>
+  </div>
+<% } %>

@@ -1,0 +1,40 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with gradient -->
+  <defs>
+    <linearGradient id="noImageGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8fafc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f1f5f9;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" fill="url(#noImageGrad)"/>
+
+  <!-- Main container -->
+  <rect x="50" y="50" width="200" height="200" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" rx="8"/>
+
+  <!-- Image icon with improved design -->
+  <rect x="80" y="80" width="140" height="100" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8,4" rx="4"/>
+
+  <!-- Enhanced image symbol -->
+  <circle cx="110" cy="110" r="12" fill="#94a3b8"/>
+  <path d="M90 160 L110 140 L130 155 L160 125 L190 155 V160 H90Z" fill="#94a3b8"/>
+
+  <!-- Mountain peaks for landscape -->
+  <path d="M160 125 L170 115 L180 125" fill="#cbd5e1"/>
+  <path d="M170 130 L175 125 L180 130" fill="#cbd5e1"/>
+
+  <!-- Picture frame corners -->
+  <path d="M75 75 L85 75 L85 85" stroke="#64748b" stroke-width="2" fill="none"/>
+  <path d="M215 75 L225 75 L225 85" stroke="#64748b" stroke-width="2" fill="none"/>
+  <path d="M75 175 L85 175 L85 185" stroke="#64748b" stroke-width="2" fill="none"/>
+  <path d="M215 175 L225 175 L225 185" stroke="#64748b" stroke-width="2" fill="none"/>
+
+  <!-- Text with better styling -->
+  <text x="150" y="220" text-anchor="middle" fill="#475569" font-family="Arial, sans-serif" font-size="16" font-weight="600">No Image</text>
+  <text x="150" y="240" text-anchor="middle" fill="#64748b" font-family="Arial, sans-serif" font-size="12">画像なし</text>
+
+  <!-- Decorative elements -->
+  <circle cx="70" cy="280" r="3" fill="#e2e8f0"/>
+  <circle cx="230" cy="280" r="3" fill="#e2e8f0"/>
+  <circle cx="70" cy="20" r="3" fill="#e2e8f0"/>
+  <circle cx="230" cy="20" r="3" fill="#e2e8f0"/>
+</svg>

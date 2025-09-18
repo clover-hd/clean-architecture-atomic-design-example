@@ -1,0 +1,96 @@
+<%
+/**
+ * LoginForm Molecule Component
+ * @param {string} [action] - フォームのaction属性
+ * @param {string} [method] - HTTPメソッド
+ * @param {string} [emailValue] - メールアドレスの初期値
+ * @param {Object} [errors] - エラーメッセージオブジェクト
+ * @param {string} [class] - 追加CSSクラス
+ * @param {string} [id] - ID属性
+ */
+const formAction = typeof action !== 'undefined' ? action : '/auth/login';
+const formMethod = typeof method !== 'undefined' ? method : 'POST';
+const emailValueData = typeof emailValue !== 'undefined' ? emailValue : '';
+const formErrors = typeof errors !== 'undefined' ? errors : {};
+const additionalClass = typeof className !== 'undefined' ? className : '';
+const formId = typeof id !== 'undefined' ? id : 'login-form';
+%>
+
+<form
+  id="<%= formId %>"
+  action="<%= formAction %>"
+  method="<%= formMethod %>"
+  class="login-form <%= additionalClass %>"
+  novalidate
+>
+  <!-- CSRF Token -->
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+  <div class="login-form__field">
+    <%- include('../atoms/label', {
+      text: 'メールアドレス',
+      htmlFor: 'email',
+      required: true,
+      className: 'login-form__label'
+    }) %>
+
+    <%- include('../atoms/input', {
+      type: 'email',
+      name: 'email',
+      id: 'email',
+      placeholder: 'example@email.com',
+      value: emailValueData,
+      required: true,
+      autocomplete: 'email',
+      className: 'login-form__input' + (formErrors.email ? ' login-form__input--error' : '')
+    }) %>
+
+    <% if (formErrors.email) { %>
+      <span class="login-form__error" role="alert">
+        <%= formErrors.email %>
+      </span>
+    <% } %>
+  </div>
+
+  <div class="login-form__field">
+    <%- include('../atoms/label', {
+      text: 'パスワード',
+      htmlFor: 'password',
+      required: true,
+      className: 'login-form__label'
+    }) %>
+
+    <%- include('../atoms/input', {
+      type: 'password',
+      name: 'password',
+      id: 'password',
+      placeholder: 'パスワードを入力',
+      required: true,
+      autocomplete: 'current-password',
+      className: 'login-form__input' + (formErrors.password ? ' login-form__input--error' : '')
+    }) %>
+
+    <% if (formErrors.password) { %>
+      <span class="login-form__error" role="alert">
+        <%= formErrors.password %>
+      </span>
+    <% } %>
+  </div>
+
+  <div class="login-form__actions">
+    <%- include('../atoms/button', {
+      type: 'primary',
+      text: 'ログイン',
+      formId: formId,
+      className: 'login-form__submit'
+    }) %>
+  </div>
+
+  <div class="login-form__links">
+    <%- include('../atoms/link', {
+      href: '/auth/register',
+      text: 'アカウントをお持ちでない方はこちら',
+      className: 'login-form__register-link'
+    }) %>
+  </div>
+</form>

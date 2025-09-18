@@ -1,0 +1,206 @@
+<%
+/**
+ * Footer Organism Component
+ * @param {string} [class] - 追加CSSクラス
+ * @param {Object} [companyInfo] - 会社情報
+ */
+const additionalClass = (typeof locals.class != 'undefined') ? locals.class : '';
+const company = (typeof companyInfo != 'undefined') ? companyInfo : {
+  name: 'ECサイト学習プロジェクト',
+  address: '東京都渋谷区',
+  phone: '03-0000-0000',
+  email: 'info@example.com'
+};
+
+const currentYear = new Date().getFullYear();
+
+// フッターナビゲーション
+const footerNavigation = {
+  company: {
+    title: '会社情報',
+    links: [
+      { href: '/about', text: '会社概要' },
+      { href: '/contact', text: 'お問い合わせ' },
+      { href: '/privacy', text: 'プライバシーポリシー' },
+      { href: '/terms', text: '利用規約' }
+    ]
+  },
+  support: {
+    title: 'サポート',
+    links: [
+      { href: '/help', text: 'ヘルプ' },
+      { href: '/faq', text: 'よくある質問' },
+      { href: '/shipping', text: '配送について' },
+      { href: '/returns', text: '返品・交換' }
+    ]
+  },
+  account: {
+    title: 'アカウント',
+    links: [
+      { href: '/auth/login', text: 'ログイン' },
+      { href: '/auth/register', text: '新規登録' },
+      { href: '/profile', text: 'マイページ' },
+      { href: '/orders', text: '注文履歴' }
+    ]
+  }
+};
+%>
+
+<footer class="footer <%= additionalClass %>" role="contentinfo">
+  <div class="footer__container">
+    <!-- フッタートップ -->
+    <div class="footer__top">
+      <!-- ブランド情報 -->
+      <div class="footer__brand">
+        <h2 class="footer__brand-title">
+          <%- include('../atoms/link', {
+            href: '/',
+            text: company.name,
+            className: 'footer__brand-link'
+          }) %>
+        </h2>
+        <p class="footer__brand-description">
+          クリーンアーキテクチャとアトミックデザインを学ぶための
+          TypeScript製ECサイト学習プロジェクト
+        </p>
+      </div>
+
+      <!-- ナビゲーション -->
+      <nav class="footer__nav" role="navigation" aria-label="フッターナビゲーション">
+        <div class="footer__nav-columns">
+          <% Object.keys(footerNavigation).forEach(key => { %>
+            <div class="footer__nav-column">
+              <h3 class="footer__nav-title"><%= footerNavigation[key].title %></h3>
+              <ul class="footer__nav-list">
+                <% footerNavigation[key].links.forEach(link => { %>
+                  <li class="footer__nav-item">
+                    <%- include('../atoms/link', {
+                      href: link.href,
+                      text: link.text,
+                      className: 'footer__nav-link'
+                    }) %>
+                  </li>
+                <% }); %>
+              </ul>
+            </div>
+          <% }); %>
+        </div>
+      </nav>
+
+      <!-- 連絡先情報 -->
+      <div class="footer__contact">
+        <h3 class="footer__contact-title">お問い合わせ</h3>
+        <address class="footer__contact-info">
+          <div class="footer__contact-item">
+            <span class="footer__contact-label">住所:</span>
+            <span class="footer__contact-value"><%= company.address %></span>
+          </div>
+          <div class="footer__contact-item">
+            <span class="footer__contact-label">電話:</span>
+            <%- include('../atoms/link', {
+              href: 'tel:' + company.phone.replace(/[^0-9]/g, ''),
+              text: company.phone,
+              className: 'footer__contact-link'
+            }) %>
+          </div>
+          <div class="footer__contact-item">
+            <span class="footer__contact-label">メール:</span>
+            <%- include('../atoms/link', {
+              href: 'mailto:' + company.email,
+              text: company.email,
+              className: 'footer__contact-link'
+            }) %>
+          </div>
+        </address>
+      </div>
+    </div>
+
+    <!-- フッターボトム -->
+    <div class="footer__bottom">
+      <!-- ソーシャルリンク -->
+      <div class="footer__social">
+        <h4 class="footer__social-title">フォローする</h4>
+        <ul class="footer__social-list">
+          <li class="footer__social-item">
+            <%- include('../atoms/link', {
+              href: '#',
+              text: 'Twitter',
+              className: 'footer__social-link',
+              external: true,
+              title: 'Twitter公式アカウント'
+            }) %>
+          </li>
+          <li class="footer__social-item">
+            <%- include('../atoms/link', {
+              href: '#',
+              text: 'Facebook',
+              className: 'footer__social-link',
+              external: true,
+              title: 'Facebook公式ページ'
+            }) %>
+          </li>
+          <li class="footer__social-item">
+            <%- include('../atoms/link', {
+              href: '#',
+              text: 'Instagram',
+              className: 'footer__social-link',
+              external: true,
+              title: 'Instagram公式アカウント'
+            }) %>
+          </li>
+        </ul>
+      </div>
+
+      <!-- ニュースレター -->
+      <div class="footer__newsletter">
+        <h4 class="footer__newsletter-title">ニュースレター</h4>
+        <p class="footer__newsletter-description">
+          最新情報やお得なキャンペーン情報をお届けします
+        </p>
+        <form class="footer__newsletter-form" action="/newsletter" method="POST">
+          <div class="footer__newsletter-input-group">
+            <%- include('../atoms/input', {
+              type: 'email',
+              name: 'email',
+              placeholder: 'メールアドレスを入力',
+              required: true,
+              className: 'footer__newsletter-input'
+            }) %>
+            <%- include('../atoms/button', {
+              type: 'primary',
+              text: '登録',
+              className: 'footer__newsletter-button'
+            }) %>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- コピーライト -->
+    <div class="footer__copyright">
+      <div class="footer__copyright-content">
+        <p class="footer__copyright-text">
+          &copy; <%= currentYear %> <%= company.name %>. All rights reserved.
+        </p>
+        <div class="footer__legal-links">
+          <%- include('../atoms/link', {
+            href: '/privacy',
+            text: 'プライバシーポリシー',
+            className: 'footer__legal-link'
+          }) %>
+          <%- include('../atoms/link', {
+            href: '/terms',
+            text: '利用規約',
+            className: 'footer__legal-link'
+          }) %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ページトップボタン -->
+  <button class="footer__back-to-top" onclick="scrollToTop()" aria-label="ページトップに戻る">
+    <span class="footer__back-to-top-icon" aria-hidden="true">↑</span>
+    <span class="footer__back-to-top-text">TOP</span>
+  </button>
+</footer>

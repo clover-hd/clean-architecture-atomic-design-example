@@ -1,0 +1,34 @@
+# Dependencies
+node_modules
+
+# Production build
+dist
+build
+
+# Environment files
+.env*
+!.env.example
+
+# Logs
+logs
+*.log
+
+# Database
+*.sqlite
+*.db
+
+# Temporary files
+temp
+.tmp
+
+# IDE files
+.vscode
+.idea
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Generated files
+coverage
+.nyc_output

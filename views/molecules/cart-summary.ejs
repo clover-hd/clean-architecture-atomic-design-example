@@ -1,0 +1,103 @@
+<%
+/**
+ * CartSummary Molecule Component
+ * @param {Object} cart - カートオブジェクト
+ * @param {Array} cart.items - カート商品配列
+ * @param {number} cart.totalAmount - 合計金額
+ * @param {number} cart.totalQuantity - 合計数量
+ * @param {number} [tax] - 税額
+ * @param {number} [shipping] - 送料
+ * @param {string} [class] - 追加CSSクラス
+ * @param {boolean} [showCheckout] - チェックアウトボタン表示フラグ
+ */
+const cartData = cart || {};
+const cartItems = cartData.items || [];
+const subtotal = cartData.totalAmount || 0;
+const totalQuantity = cartData.totalQuantity || 0;
+const taxAmount = tax || Math.floor(subtotal * 0.1);
+const shippingAmount = shipping || (subtotal > 3000 ? 0 : 500);
+const totalAmount = subtotal + taxAmount + shippingAmount;
+const additionalClass = (typeof className !== 'undefined') ? className : '';
+const showCheckoutButton = showCheckout !== false;
+const isEmpty = cartItems.length === 0;
+%>
+
+<aside class="cart-summary <%= additionalClass %>">
+  <h2 class="cart-summary__title">注文サマリー</h2>
+
+  <% if (isEmpty) { %>
+    <div class="cart-summary__empty">
+      <p class="cart-summary__empty-text">カートは空です</p>
+    </div>
+  <% } else { %>
+    <div class="cart-summary__content">
+      <!-- 商品数量 -->
+      <div class="cart-summary__quantity">
+        <span class="cart-summary__quantity-text">
+          商品数: <%= totalQuantity %>点
+        </span>
+      </div>
+
+      <!-- 金額詳細 -->
+      <dl class="cart-summary__breakdown">
+        <div class="cart-summary__row">
+          <dt class="cart-summary__label">商品合計</dt>
+          <dd class="cart-summary__value">¥<%= subtotal.toLocaleString() %></dd>
+        </div>
+
+        <div class="cart-summary__row">
+          <dt class="cart-summary__label">消費税</dt>
+          <dd class="cart-summary__value">¥<%= taxAmount.toLocaleString() %></dd>
+        </div>
+
+        <div class="cart-summary__row">
+          <dt class="cart-summary__label">
+            送料
+            <% if (subtotal > 3000) { %>
+              <span class="cart-summary__free-shipping">(3,000円以上で無料)</span>
+            <% } %>
+          </dt>
+          <dd class="cart-summary__value">
+            <% if (shippingAmount === 0) { %>
+              <span class="cart-summary__free">無料</span>
+            <% } else { %>
+              ¥<%= shippingAmount.toLocaleString() %>
+            <% } %>
+          </dd>
+        </div>
+
+        <div class="cart-summary__row cart-summary__row--total">
+          <dt class="cart-summary__label cart-summary__label--total">合計</dt>
+          <dd class="cart-summary__value cart-summary__value--total">
+            ¥<%= totalAmount.toLocaleString() %>
+          </dd>
+        </div>
+      </dl>
+
+      <!-- アクション -->
+      <% if (showCheckoutButton) { %>
+        <div class="cart-summary__actions">
+          <%- include('../atoms/button', {
+            type: 'primary',
+            text: 'レジに進む',
+            href: '/checkout',
+            className: 'cart-summary__checkout'
+          }) %>
+
+          <%- include('../atoms/link', {
+            href: '/products',
+            text: '買い物を続ける',
+            className: 'cart-summary__continue-shopping'
+          }) %>
+        </div>
+      <% } %>
+
+      <!-- 配送情報 -->
+      <div class="cart-summary__shipping-info">
+        <p class="cart-summary__shipping-note">
+          3,000円以上のご注文で送料無料
+        </p>
+      </div>
+    </div>
+  <% } %>
+</aside>

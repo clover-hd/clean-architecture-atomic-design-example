@@ -1,0 +1,45 @@
+<%
+/**
+ * Input Atom Component
+ * @param {string} type - 入力タイプ (text|email|password|number|search|tel|url)
+ * @param {string} name - name属性
+ * @param {string} [id] - ID属性
+ * @param {string} [placeholder] - プレースホルダー
+ * @param {string} [value] - 初期値
+ * @param {boolean} [required] - 必須フラグ
+ * @param {boolean} [disabled] - 無効化フラグ
+ * @param {boolean} [readonly] - 読み取り専用フラグ
+ * @param {string} [class] - 追加CSSクラス
+ * @param {string} [autocomplete] - オートコンプリート
+ * @param {string} [pattern] - バリデーションパターン
+ * @param {number} [min] - 最小値（numberタイプ）
+ * @param {number} [max] - 最大値（numberタイプ）
+ * @param {number} [step] - ステップ（numberタイプ）
+ */
+const inputType = (typeof type === 'undefined') ? 'text' : type;
+const inputName = (typeof name === 'undefined') ? '' : name;
+const inputId = (typeof id === 'undefined') ? inputName : id;
+const inputPlaceholder = (typeof placeholder === 'undefined') ? '' : placeholder;
+const inputValue = (typeof value === 'undefined') ? '' : value;
+const isRequired = (typeof required === 'undefined') ? false : required;
+const isDisabled = (typeof disabled === 'undefined') ? false : disabled;
+const isReadonly = (typeof readonly === 'undefined') ? false : readonly;
+const additionalClass = (typeof className === 'undefined') ? '' : className;
+%>
+
+<input
+  type="<%= inputType %>"
+  name="<%= inputName %>"
+  <% if (inputId) { %>id="<%= inputId %>"<% } %>
+  class="input <%= additionalClass %>"
+  <% if (inputPlaceholder) { %>placeholder="<%= inputPlaceholder %>"<% } %>
+  <% if (inputValue) { %>value="<%= inputValue %>"<% } %>
+  <% if (isRequired) { %>required aria-required="true"<% } %>
+  <% if (isDisabled) { %>disabled aria-disabled="true"<% } %>
+  <% if (isReadonly) { %>readonly<% } %>
+  <% if (typeof autocomplete != 'undefined') { %>autocomplete="<%= autocomplete %>"<% } %>
+  <% if (typeof pattern != 'undefined') { %>pattern="<%= pattern %>"<% } %>
+  <% if (inputType == 'number' && typeof min != 'undefined') { %>min="<%= min %>"<% } %>
+  <% if (inputType == 'number' && typeof max != 'undefined') { %>max="<%= max %>"<% } %>
+  <% if (inputType == 'number' && typeof step != 'undefined') { %>step="<%= step %>"<% } %>
+/>

@@ -1,0 +1,254 @@
+<%
+/**
+ * Auth Layout Template
+ * @param {string} title - ページタイトル
+ * @param {string} [description] - メタディスクリプション
+ * @param {Object} [errors] - エラーメッセージ
+ * @param {Array} [messages] - 通知メッセージ
+ * @param {string} [messageType] - メッセージタイプ
+ * @param {string} [authType] - 認証タイプ (login|register|forgot|reset)
+ */
+const pageTitle = title || '認証';
+const metaDescription = description || '';
+const errorData = errors || {};
+const messageList = messages || [];
+const msgType = messageType || 'info';
+const authenticationType = authType || 'login';
+
+// 認証関連のメタデータ
+const authMeta = {
+  login: {
+    title: 'ログイン',
+    description: 'アカウントにログインして、お買い物をお楽しみください。'
+  },
+  register: {
+    title: '新規登録',
+    description: '新しいアカウントを作成して、お買い物を始めましょう。'
+  },
+  forgot: {
+    title: 'パスワード再設定',
+    description: 'パスワードを忘れた場合の再設定手続きです。'
+  },
+  reset: {
+    title: 'パスワードリセット',
+    description: '新しいパスワードを設定してください。'
+  }
+};
+
+const currentMeta = authMeta[authenticationType] || authMeta.login;
+%>
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <%- include('../partials/head', {
+    title: pageTitle,
+    description: metaDescription || currentMeta.description
+  }) %>
+
+  <!-- Auth-specific CSS -->
+  <link rel="stylesheet" href="/css/auth.css">
+</head>
+
+<body class="auth-layout auth-layout--<%= authenticationType %>">
+  <!-- Skip Link for Accessibility -->
+  <a href="#auth-main-content" class="skip-link">メインコンテンツへ移動</a>
+
+  <!-- Auth Wrapper -->
+  <div class="auth-wrapper">
+    <!-- Auth Header -->
+    <header class="auth-header" role="banner">
+      <div class="auth-header__container">
+        <%- include('../atoms/link', {
+          href: '/',
+          text: 'ECサイト',
+          className: 'auth-header__logo',
+          title: 'ホームページに戻る'
+        }) %>
+
+        <nav class="auth-header__nav" role="navigation" aria-label="認証ナビゲーション">
+          <% if (authenticationType !== 'login') { %>
+            <%- include('../atoms/link', {
+              href: '/auth/login',
+              text: 'ログイン',
+              className: 'auth-header__nav-link'
+            }) %>
+          <% } %>
+
+          <% if (authenticationType !== 'register') { %>
+            <%- include('../atoms/link', {
+              href: '/auth/register',
+              text: '新規登録',
+              className: 'auth-header__nav-link'
+            }) %>
+          <% } %>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Auth Main Content -->
+    <main id="auth-main-content" class="auth-main" role="main">
+      <div class="auth-container">
+        <!-- Auth Card -->
+        <div class="auth-card">
+          <!-- Auth Card Header -->
+          <div class="auth-card__header">
+            <h1 class="auth-card__title"><%= pageTitle %></h1>
+            <p class="auth-card__description">
+              <%= metaDescription || currentMeta.description %>
+            </p>
+          </div>
+
+          <!-- Flash Messages -->
+          <% if (Object.keys(errorData).length > 0) { %>
+            <%- include('../partials/error-messages', {
+              errors: errorData,
+              type: 'error'
+            }) %>
+          <% } %>
+
+          <% if (messageList.length > 0) { %>
+            <%- include('../partials/error-messages', {
+              messages: messageList,
+              type: msgType
+            }) %>
+          <% } %>
+
+          <!-- Auth Card Body -->
+          <div class="auth-card__body">
+            <%- body %>
+          </div>
+
+          <!-- Auth Card Footer -->
+          <div class="auth-card__footer">
+            <% if (authenticationType === 'login') { %>
+              <div class="auth-card__links">
+                <%- include('../atoms/link', {
+                  href: '/auth/register',
+                  text: 'アカウントをお持ちでない方はこちら',
+                  className: 'auth-card__link'
+                }) %>
+
+                <%- include('../atoms/link', {
+                  href: '/auth/forgot-password',
+                  text: 'パスワードを忘れた方はこちら',
+                  className: 'auth-card__link'
+                }) %>
+              </div>
+            <% } else if (authenticationType === 'register') { %>
+              <div class="auth-card__links">
+                <%- include('../atoms/link', {
+                  href: '/auth/login',
+                  text: 'すでにアカウントをお持ちの方はこちら',
+                  className: 'auth-card__link'
+                }) %>
+              </div>
+            <% } else if (authenticationType === 'forgot') { %>
+              <div class="auth-card__links">
+                <%- include('../atoms/link', {
+                  href: '/auth/login',
+                  text: 'ログインページに戻る',
+                  className: 'auth-card__link'
+                }) %>
+              </div>
+            <% } %>
+
+            <!-- Terms and Privacy -->
+            <div class="auth-card__legal">
+              <p class="auth-card__legal-text">
+                続行することで、
+                <%- include('../atoms/link', {
+                  href: '/terms',
+                  text: '利用規約',
+                  className: 'auth-card__legal-link',
+                  target: '_blank'
+                }) %>
+                および
+                <%- include('../atoms/link', {
+                  href: '/privacy',
+                  text: 'プライバシーポリシー',
+                  className: 'auth-card__legal-link',
+                  target: '_blank'
+                }) %>
+                に同意したものとみなします。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Auth Benefits (Login/Register only) -->
+        <% if (authenticationType === 'login' || authenticationType === 'register') { %>
+          <div class="auth-benefits">
+            <h2 class="auth-benefits__title">会員特典</h2>
+            <ul class="auth-benefits__list">
+              <li class="auth-benefits__item">
+                <span class="auth-benefits__icon" aria-hidden="true">🚚</span>
+                <span class="auth-benefits__text">3,000円以上で送料無料</span>
+              </li>
+              <li class="auth-benefits__item">
+                <span class="auth-benefits__icon" aria-hidden="true">📋</span>
+                <span class="auth-benefits__text">注文履歴の確認</span>
+              </li>
+              <li class="auth-benefits__item">
+                <span class="auth-benefits__icon" aria-hidden="true">💳</span>
+                <span class="auth-benefits__text">お気に入り商品の保存</span>
+              </li>
+              <li class="auth-benefits__item">
+                <span class="auth-benefits__icon" aria-hidden="true">🎁</span>
+                <span class="auth-benefits__text">限定セールのお知らせ</span>
+              </li>
+            </ul>
+          </div>
+        <% } %>
+      </div>
+    </main>
+
+    <!-- Auth Footer -->
+    <footer class="auth-footer" role="contentinfo">
+      <div class="auth-footer__container">
+        <nav class="auth-footer__nav" role="navigation" aria-label="フッターナビゲーション">
+          <%- include('../atoms/link', {
+            href: '/help',
+            text: 'ヘルプ',
+            className: 'auth-footer__link'
+          }) %>
+
+          <%- include('../atoms/link', {
+            href: '/contact',
+            text: 'お問い合わせ',
+            className: 'auth-footer__link'
+          }) %>
+
+          <%- include('../atoms/link', {
+            href: '/terms',
+            text: '利用規約',
+            className: 'auth-footer__link'
+          }) %>
+
+          <%- include('../atoms/link', {
+            href: '/privacy',
+            text: 'プライバシーポリシー',
+            className: 'auth-footer__link'
+          }) %>
+        </nav>
+
+        <p class="auth-footer__copyright">
+          &copy; <%= new Date().getFullYear() %> ECサイト学習プロジェクト. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <%- include('../partials/scripts', {
+    customScripts: ['/js/auth.js']
+  }) %>
+
+  <!-- Auth-specific inline scripts -->
+  <% if (typeof authScript !== 'undefined') { %>
+    <script>
+      <%- authScript %>
+    </script>
+  <% } %>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<%
+/**
+ * ProductCard Molecule Component
+ * @param {Object} product - 商品オブジェクト
+ * @param {string} product.id - 商品ID
+ * @param {string} product.name - 商品名
+ * @param {number} product.price - 価格
+ * @param {string} [product.image] - 商品画像URL
+ * @param {string} [product.description] - 商品説明
+ * @param {number} [product.stock] - 在庫数
+ * @param {string} [class] - 追加CSSクラス
+ * @param {boolean} [showAddToCart] - カート追加ボタン表示フラグ
+ */
+const productData = typeof product !== 'undefined' ? product : {};
+const productId = productData.id || '';
+const productName = productData.name || '商品名';
+const productPrice = productData.price || 0;
+// Smart image selection based on category with fallbacks
+let productImage = productData.image;
+if (!productImage || productImage === '/images/no-image.svg') {
+  // Map categories to appropriate placeholder images
+  const categoryImageMap = {
+    'electronics': '/images/product-electronics.svg',
+    'fashion': '/images/product-clothing.svg',
+    'books': '/images/product-books.svg',
+    'home': '/images/product-home.svg',
+    'food': '/images/product-home.svg'
+  };
+
+  const productCategory = productData.category || '';
+  productImage = categoryImageMap[productCategory] || '/images/no-image.svg';
+}
+const productDescription = productData.description || '';
+const productStock = productData.stock || 0;
+const additionalClass = typeof className !== 'undefined' ? className : '';
+const showCartButton = typeof showAddToCart !== 'undefined' ? showAddToCart : true;
+const isOutOfStock = productStock <= 0;
+%>
+
+<article class="product-card <%= additionalClass %>" data-product-id="<%= productId %>">
+  <div class="product-card__image-container">
+    <a href="/products/<%= productId %>" class="product-card__image-link" title="<%= productName %>の詳細を見る">
+      <%- include('../atoms/image', {
+        src: productImage,
+        alt: productName,
+        className: 'product-card__image',
+        lazy: true,
+        width: '300',
+        height: '300'
+      }) %>
+    </a>
+  </div>
+
+  <div class="product-card__content">
+    <h3 class="product-card__title">
+      <%- include('../atoms/link', {
+        href: '/products/' + productId,
+        text: productName,
+        className: 'product-card__title-link'
+      }) %>
+    </h3>
+
+    <div class="product-card__price">
+      <span class="product-card__price-symbol">¥</span>
+      <span class="product-card__price-amount"><%= productPrice.toLocaleString() %></span>
+    </div>
+
+    <% if (productDescription) { %>
+      <p class="product-card__description">
+        <%= productDescription.length > 100 ? productDescription.substring(0, 100) + '...' : productDescription %>
+      </p>
+    <% } %>
+
+    <div class="product-card__meta">
+      <span class="product-card__stock <%= isOutOfStock ? 'product-card__stock--out' : '' %>">
+        <% if (isOutOfStock) { %>
+          在庫切れ
+        <% } else { %>
+          在庫: <%= productStock %>個
+        <% } %>
+      </span>
+    </div>
+
+    <% if (showCartButton) { %>
+      <div class="product-card__actions">
+        <%- include('../atoms/button', {
+          type: isOutOfStock ? 'secondary' : 'primary',
+          text: isOutOfStock ? '在庫切れ' : 'カートに追加',
+          disabled: isOutOfStock,
+          className: 'product-card__add-to-cart',
+          onclick: isOutOfStock ? '' : "addToCart('" + productId + "')"
+        }) %>
+      </div>
+    <% } %>
+  </div>
+</article>

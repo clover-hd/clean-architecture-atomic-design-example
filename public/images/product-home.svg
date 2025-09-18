@@ -1,0 +1,59 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="homeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ecfdf5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f8fafc;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" fill="url(#homeGrad)"/>
+
+  <!-- House structure -->
+  <path d="M150 60 L220 120 L220 200 L80 200 L80 120 Z" fill="#065f46"/>
+  <rect x="90" y="130" width="120" height="70" fill="#10b981"/>
+
+  <!-- Roof -->
+  <path d="M150 60 L70 125 L80 130 L150 70 L220 130 L230 125 Z" fill="#dc2626"/>
+
+  <!-- Door -->
+  <rect x="130" y="160" width="40" height="40" fill="#92400e"/>
+  <circle cx="160" cy="180" r="2" fill="#fbbf24"/>
+
+  <!-- Windows -->
+  <rect x="100" y="145" width="20" height="20" fill="#93c5fd" stroke="#1e40af" stroke-width="2"/>
+  <line x1="110" y1="145" x2="110" y2="165" stroke="#1e40af" stroke-width="1"/>
+  <line x1="100" y1="155" x2="120" y2="155" stroke="#1e40af" stroke-width="1"/>
+
+  <rect x="180" y="145" width="20" height="20" fill="#93c5fd" stroke="#1e40af" stroke-width="2"/>
+  <line x1="190" y1="145" x2="190" y2="165" stroke="#1e40af" stroke-width="1"/>
+  <line x1="180" y1="155" x2="200" y2="155" stroke="#1e40af" stroke-width="1"/>
+
+  <!-- Chimney -->
+  <rect x="190" y="70" width="15" height="30" fill="#6b7280"/>
+  <rect x="188" y="68" width="19" height="8" fill="#4b5563"/>
+
+  <!-- Smoke -->
+  <circle cx="200" cy="60" r="3" fill="#d1d5db" opacity="0.6"/>
+  <circle cx="205" cy="55" r="2" fill="#d1d5db" opacity="0.4"/>
+  <circle cx="202" cy="50" r="2" fill="#d1d5db" opacity="0.3"/>
+
+  <!-- Garden elements -->
+  <circle cx="70" cy="220" r="15" fill="#84cc16"/>
+  <rect x="67" y="215" width="6" height="10" fill="#65a30d"/>
+
+  <circle cx="230" cy="220" r="15" fill="#84cc16"/>
+  <rect x="227" y="215" width="6" height="10" fill="#65a30d"/>
+
+  <!-- Decorative fence -->
+  <rect x="40" y="230" width="220" height="3" fill="#8b5cf6"/>
+  <rect x="50" y="225" width="3" height="15" fill="#8b5cf6"/>
+  <rect x="70" y="225" width="3" height="15" fill="#8b5cf6"/>
+  <rect x="90" y="225" width="3" height="15" fill="#8b5cf6"/>
+  <rect x="210" y="225" width="3" height="15" fill="#8b5cf6"/>
+  <rect x="230" y="225" width="3" height="15" fill="#8b5cf6"/>
+  <rect x="250" y="225" width="3" height="15" fill="#8b5cf6"/>
+
+  <!-- Text -->
+  <text x="150" y="265" text-anchor="middle" fill="#059669" font-family="Arial, sans-serif" font-size="16" font-weight="600">Home & Garden</text>
+  <text x="150" y="280" text-anchor="middle" fill="#065f46" font-family="Arial, sans-serif" font-size="12">ホーム・ガーデン</text>
+</svg>

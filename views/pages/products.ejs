@@ -1,0 +1,254 @@
+<%
+/**
+ * 商品一覧ページ
+ */
+
+// ページメタデータ
+const pageTitle = title || '商品一覧';
+const pageDescription = 'さまざまな商品をお取り揃えしております。お気に入りの商品を見つけてください。';
+const currentUrl = currentPath || '/products';
+
+// パンくずリスト
+const breadcrumbs = [
+  { href: '/', text: 'ホーム' },
+  { href: '/products', text: '商品一覧' }
+];
+
+// 検索・フィルタリング状態
+const hasSearch = searchParams.query && searchParams.query.trim().length > 0;
+const hasFilters = searchParams.category || searchParams.minPrice || searchParams.maxPrice;
+const hasResults = products && products.length > 0;
+
+// ソート オプション
+const sortOptions = [
+  { value: 'name:asc', label: '商品名 (A-Z)' },
+  { value: 'name:desc', label: '商品名 (Z-A)' },
+  { value: 'price:asc', label: '価格 (安い順)' },
+  { value: 'price:desc', label: '価格 (高い順)' },
+  { value: 'created_at:desc', label: '新着順' },
+  { value: 'created_at:asc', label: '古い順' }
+];
+const currentSort = `${searchParams.sortBy || 'created_at'}:${searchParams.sortOrder || 'desc'}`;
+%>
+
+
+<div class="products-page">
+  <div class="products-page__container">
+    <!-- Page Header -->
+    <header class="products-page__header">
+      <div class="products-page__header-content">
+        <h1 class="products-page__title">商品一覧</h1>
+        <p class="products-page__description">
+          <% if (pagination.totalCount > 0) { %>
+            全 <%= pagination.totalCount %> 件の商品
+          <% } else { %>
+            商品をお探しください
+          <% } %>
+        </p>
+      </div>
+    </header>
+
+    <!-- Search and Filter Section -->
+    <section class="products-page__filters">
+      <div class="products-page__filters-container">
+        <!-- Search Form -->
+        <div class="products-page__search">
+          <%- include('../molecules/search-form', {
+            placeholder: '商品を検索...',
+            value: searchParams.query || '',
+            action: '/products',
+            method: 'GET',
+            className: 'products-page__search-form'
+          }) %>
+        </div>
+
+        <!-- Sort and View Options -->
+        <div class="products-page__toolbar">
+          <!-- Sort Selector -->
+          <div class="products-page__sort">
+            <%- include('../atoms/label', {
+              for: 'sort-select',
+              text: '並び順:',
+              className: 'products-page__sort-label'
+            }) %>
+            <select id="sort-select" name="sort" class="products-page__sort-select">
+              <% sortOptions.forEach(option => { %>
+                <option value="<%= option.value %>" <%= currentSort === option.value ? 'selected' : '' %>>
+                  <%= option.label %>
+                </option>
+              <% }); %>
+            </select>
+          </div>
+
+          <!-- View Type (Grid/List) -->
+          <div class="products-page__view-toggle">
+            <%- include('../atoms/button', {
+              type: 'secondary',
+              text: '⊞',
+              className: 'products-page__view-btn products-page__view-btn--grid products-page__view-btn--active',
+              title: 'グリッド表示',
+              'data-view': 'grid'
+            }) %>
+            <%- include('../atoms/button', {
+              type: 'secondary',
+              text: '☰',
+              className: 'products-page__view-btn products-page__view-btn--list',
+              title: 'リスト表示',
+              'data-view': 'list'
+            }) %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Filters Display -->
+      <% if (hasSearch || hasFilters) { %>
+        <div class="products-page__active-filters">
+          <div class="products-page__filter-tags">
+            <% if (hasSearch) { %>
+              <span class="products-page__filter-tag">
+                検索: "<%= searchParams.query %>"
+                <%- include('../atoms/button', {
+                  type: 'link',
+                  text: '×',
+                  href: '/products' + (hasFilters ? `?category=${searchParams.category}&minPrice=${searchParams.minPrice}&maxPrice=${searchParams.maxPrice}` : ''),
+                  className: 'products-page__filter-remove'
+                }) %>
+              </span>
+            <% } %>
+            <% if (searchParams.category) { %>
+              <span class="products-page__filter-tag">
+                カテゴリ: <%= searchParams.category %>
+                <%- include('../atoms/link', {
+                  href: '/products' + (hasSearch ? `?q=${searchParams.query}` : ''),
+                  text: '×',
+                  className: 'products-page__filter-remove'
+                }) %>
+              </span>
+            <% } %>
+          </div>
+          <%- include('../atoms/link', {
+            href: '/products',
+            text: 'すべてクリア',
+            className: 'products-page__clear-filters'
+          }) %>
+        </div>
+      <% } %>
+    </section>
+
+    <!-- Products Results -->
+    <main class="products-page__results">
+      <% if (hasResults) { %>
+        <!-- Products Grid -->
+        <div class="products-page__grid" data-view="grid">
+          <% products.forEach(product => { %>
+            <div class="products-page__product">
+              <%- include('../molecules/product-card', {
+                product: product,
+                className: 'products-page__product-card'
+              }) %>
+            </div>
+          <% }); %>
+        </div>
+
+        <!-- Pagination -->
+        <% if (pagination.totalPages > 1) { %>
+          <div class="products-page__pagination">
+            <%- include('../molecules/pagination', {
+              currentPage: pagination.currentPage,
+              totalPages: pagination.totalPages,
+              baseUrl: '/products',
+              searchParams: searchParams,
+              className: 'products-page__pagination-nav'
+            }) %>
+          </div>
+        <% } %>
+      <% } else { %>
+        <!-- No Results -->
+        <div class="products-page__no-results">
+          <div class="products-page__no-results-content">
+            <div class="products-page__no-results-icon">📦</div>
+            <h2 class="products-page__no-results-title">
+              <% if (hasSearch || hasFilters) { %>
+                検索条件に一致する商品が見つかりませんでした
+              <% } else { %>
+                現在、表示できる商品がありません
+              <% } %>
+            </h2>
+            <p class="products-page__no-results-description">
+              <% if (hasSearch || hasFilters) { %>
+                検索条件を変更してお試しください。
+              <% } else { %>
+                申し訳ございませんが、現在商品をご用意しておりません。後ほど再度ご確認ください。
+              <% } %>
+            </p>
+
+            <div class="products-page__no-results-actions">
+              <% if (hasSearch || hasFilters) { %>
+                <%- include('../atoms/button', {
+                  type: 'primary',
+                  text: 'すべての商品を見る',
+                  href: '/products',
+                  className: 'products-page__view-all-btn'
+                }) %>
+              <% } %>
+              <%- include('../atoms/button', {
+                type: 'secondary',
+                text: 'ホームに戻る',
+                href: '/',
+                className: 'products-page__home-btn'
+              }) %>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </main>
+  </div>
+</div>
+
+<!-- Page-specific scripts -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Sort selector functionality
+  const sortSelect = document.getElementById('sort-select');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', function() {
+      const [sortBy, sortOrder] = this.value.split(':');
+      const url = new URL(window.location);
+      url.searchParams.set('sortBy', sortBy);
+      url.searchParams.set('sortOrder', sortOrder);
+      window.location.href = url.toString();
+    });
+  }
+
+  // View toggle functionality
+  const viewButtons = document.querySelectorAll('.products-page__view-btn');
+  const productsGrid = document.querySelector('.products-page__grid');
+
+  viewButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const viewType = this.dataset.view;
+
+      // Update active button
+      viewButtons.forEach(b => b.classList.remove('products-page__view-btn--active'));
+      this.classList.add('products-page__view-btn--active');
+
+      // Update grid layout
+      if (productsGrid) {
+        productsGrid.dataset.view = viewType;
+      }
+    });
+  });
+
+  // Product card hover effects
+  const productCards = document.querySelectorAll('.products-page__product-card');
+  productCards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.classList.add('product-card--hover');
+    });
+
+    card.addEventListener('mouseleave', function() {
+      this.classList.remove('product-card--hover');
+    });
+  });
+});
+</script>

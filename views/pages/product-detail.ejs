@@ -1,0 +1,328 @@
+<%
+/**
+ * Product Detail Page
+ * @param {Object} product - 商品詳細情報
+ * @param {Array} [relatedProducts] - 関連商品配列
+ * @param {Object} [user] - ログインユーザー情報
+ */
+const productData = product || {};
+const relatedItems = relatedProducts || [];
+const userData = user || null;
+
+// パンくずリスト
+const breadcrumbs = [
+  { href: '/', text: 'ホーム' },
+  { href: '/products', text: '商品一覧' },
+  { href: `/products/${productData.id}`, text: productData.name || '商品詳細' }
+];
+
+const isOutOfStock = productData.stock <= 0;
+const hasImages = productData.images && productData.images.length > 0;
+
+// Smart image selection with category-based fallbacks
+let mainImage;
+if (hasImages) {
+  mainImage = productData.images[0];
+} else if (productData.image) {
+  mainImage = productData.image;
+} else {
+  // Use category-specific placeholder
+  const categoryImageMap = {
+    'electronics': '/images/product-electronics.svg',
+    'fashion': '/images/product-clothing.svg',
+    'books': '/images/product-books.svg',
+    'home': '/images/product-home.svg',
+    'food': '/images/product-home.svg'
+  };
+
+  const productCategory = productData.category || '';
+  mainImage = categoryImageMap[productCategory] || '/images/no-image.svg';
+}
+%>
+
+<%# Layout functionality is handled by express-ejs-layouts, so we just render content directly %>
+
+<div class="product-detail">
+  <div class="product-detail__container">
+    <!-- Product Images -->
+    <div class="product-detail__images">
+      <div class="product-detail__main-image">
+        <%- include('../atoms/image', {
+          src: mainImage,
+          alt: productData.name,
+          className: 'product-detail__main-img',
+          id: 'main-product-image',
+          width: '600',
+          height: '600'
+        }) %>
+
+        <% if (isOutOfStock) { %>
+          <div class="product-detail__stock-overlay">
+            <span class="product-detail__stock-badge">在庫切れ</span>
+          </div>
+        <% } %>
+      </div>
+
+      <% if (hasImages && productData.images.length > 1) { %>
+        <div class="product-detail__thumbnail-list">
+          <% productData.images.forEach((image, index) => { %>
+            <button
+              class="product-detail__thumbnail <%= index === 0 ? 'product-detail__thumbnail--active' : '' %>"
+              onclick="changeMainImage('<%= image %>', this)"
+              aria-label="商品画像 <%= index + 1 %>"
+            >
+              <%- include('../atoms/image', {
+                src: image,
+                alt: productData.name + ' - 画像' + (index + 1),
+                className: 'product-detail__thumbnail-img',
+                width: '80',
+                height: '80'
+              }) %>
+            </button>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Product Information -->
+    <div class="product-detail__info">
+      <header class="product-detail__header">
+        <h1 class="product-detail__title"><%= productData.name %></h1>
+
+        <div class="product-detail__meta">
+          <% if (productData.category) { %>
+            <div class="product-detail__category">
+              <%
+              // Category display mapping
+              const categoryNames = {
+                'electronics': '家電・電子機器',
+                'fashion': 'ファッション',
+                'books': '書籍',
+                'home': 'ホーム・キッチン',
+                'sports': 'スポーツ・アウトドア',
+                'food': '食品・飲料'
+              };
+              const categoryDisplayName = categoryNames[productData.category] || productData.category;
+              %>
+              <%- include('../atoms/link', {
+                href: '/products?category=' + productData.category,
+                text: categoryDisplayName,
+                className: 'product-detail__category-link'
+              }) %>
+            </div>
+          <% } %>
+
+          <% if (productData.sku) { %>
+            <div class="product-detail__sku">
+              商品コード: <%= productData.sku %>
+            </div>
+          <% } %>
+        </div>
+      </header>
+
+      <!-- Price -->
+      <div class="product-detail__price">
+        <span class="product-detail__price-current">
+          ¥<%= productData.price.toLocaleString() %>
+        </span>
+        <% if (productData.originalPrice && productData.originalPrice > productData.price) { %>
+          <span class="product-detail__price-original">
+            ¥<%= productData.originalPrice.toLocaleString() %>
+          </span>
+          <span class="product-detail__price-discount">
+            <%= Math.round((1 - productData.price / productData.originalPrice) * 100) %>% OFF
+          </span>
+        <% } %>
+      </div>
+
+      <!-- Stock Status -->
+      <div class="product-detail__stock">
+        <% if (isOutOfStock) { %>
+          <span class="product-detail__stock-status product-detail__stock-status--out">
+            在庫切れ
+          </span>
+        <% } else if (productData.stock <= 5) { %>
+          <span class="product-detail__stock-status product-detail__stock-status--low">
+            残り<%= productData.stock %>個
+          </span>
+        <% } else { %>
+          <span class="product-detail__stock-status product-detail__stock-status--available">
+            在庫あり
+          </span>
+        <% } %>
+      </div>
+
+      <!-- Description -->
+      <% if (productData.description) { %>
+        <div class="product-detail__description">
+          <h2 class="product-detail__description-title">商品説明</h2>
+          <div class="product-detail__description-content">
+            <%= productData.description %>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- Specifications -->
+      <% if (productData.specifications) { %>
+        <div class="product-detail__specifications">
+          <h2 class="product-detail__specifications-title">仕様</h2>
+          <dl class="product-detail__specifications-list">
+            <% Object.entries(productData.specifications).forEach(([key, value]) => { %>
+              <div class="product-detail__specification">
+                <dt class="product-detail__specification-key"><%= key %></dt>
+                <dd class="product-detail__specification-value"><%= value %></dd>
+              </div>
+            <% }); %>
+          </dl>
+        </div>
+      <% } %>
+
+      <!-- Add to Cart -->
+      <div class="product-detail__actions">
+        <form class="product-detail__cart-form" action="/cart/add" method="POST">
+          <!-- CSRF Token -->
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <input type="hidden" name="productId" value="<%= productData.id %>">
+
+          <div class="product-detail__quantity">
+            <%- include('../atoms/label', {
+              text: '数量:',
+              htmlFor: 'quantity',
+              className: 'product-detail__quantity-label'
+            }) %>
+
+            <div class="product-detail__quantity-controls">
+              <button
+                type="button"
+                class="product-detail__quantity-btn product-detail__quantity-btn--decrease"
+                onclick="updateQuantity(-1)"
+                disabled
+                aria-label="数量を減らす"
+              >
+                -
+              </button>
+
+              <%- include('../atoms/input', {
+                type: 'number',
+                name: 'quantity',
+                id: 'quantity',
+                value: '1',
+                min: '1',
+                max: productData.stock.toString(),
+                className: 'product-detail__quantity-input',
+                onchange: 'validateQuantity(this)'
+              }) %>
+
+              <button
+                type="button"
+                class="product-detail__quantity-btn product-detail__quantity-btn--increase"
+                onclick="updateQuantity(1)"
+                <%= productData.stock <= 1 ? 'disabled' : '' %>
+                aria-label="数量を増やす"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <div class="product-detail__cart-actions">
+            <%- include('../atoms/button', {
+              type: isOutOfStock ? 'secondary' : 'primary',
+              text: isOutOfStock ? '在庫切れ' : 'カートに追加',
+              disabled: isOutOfStock,
+              className: 'product-detail__add-to-cart',
+              size: 'large'
+            }) %>
+
+            <% if (!isOutOfStock) { %>
+              <%- include('../atoms/button', {
+                type: 'secondary',
+                text: '今すぐ購入',
+                onclick: 'buyNow()',
+                className: 'product-detail__buy-now',
+                size: 'large'
+              }) %>
+            <% } %>
+          </div>
+
+          <% if (userData) { %>
+            <div class="product-detail__wishlist">
+              <%- include('../atoms/button', {
+                type: 'outline',
+                text: 'お気に入りに追加',
+                onclick: "toggleWishlist('" + productData.id + "')",
+                className: 'product-detail__wishlist-btn'
+              }) %>
+            </div>
+          <% } %>
+        </form>
+      </div>
+
+      <!-- Shipping Info -->
+      <div class="product-detail__shipping">
+        <h3 class="product-detail__shipping-title">配送について</h3>
+        <ul class="product-detail__shipping-list">
+          <li class="product-detail__shipping-item">
+            3,000円以上で送料無料
+          </li>
+          <li class="product-detail__shipping-item">
+            通常3-5営業日でお届け
+          </li>
+          <li class="product-detail__shipping-item">
+            14時までのご注文で翌日配送可能
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Related Products -->
+<% if (relatedItems.length > 0) { %>
+  <section class="related-products">
+    <div class="related-products__container">
+      <h2 class="related-products__title">関連商品</h2>
+      <div class="related-products__grid">
+        <% relatedItems.slice(0, 4).forEach(item => { %>
+          <div class="related-products__item">
+            <%- include('../molecules/product-card', {
+              product: item,
+              showAddToCart: true,
+              className: 'related-products__card'
+            }) %>
+          </div>
+        <% }); %>
+      </div>
+
+      <div class="related-products__view-more">
+        <%- include('../atoms/link', {
+          href: '/products',
+          text: 'その他の商品を見る →',
+          className: 'related-products__link'
+        }) %>
+      </div>
+    </div>
+  </section>
+<% } %>
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "<%= productData.name %>",
+  "description": "<%= productData.description || '' %>",
+  "image": "<%= mainImage %>",
+  "sku": "<%= productData.sku || '' %>",
+  "offers": {
+    "@type": "Offer",
+    "price": "<%= productData.price %>",
+    "priceCurrency": "JPY",
+    "availability": "<%= isOutOfStock ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock' %>",
+    "seller": {
+      "@type": "Organization",
+      "name": "ECサイト学習プロジェクト"
+    }
+  }
+}
+</script>

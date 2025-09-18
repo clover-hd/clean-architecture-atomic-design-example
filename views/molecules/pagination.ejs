@@ -1,0 +1,137 @@
+<%
+/**
+ * Pagination Molecule Component
+ * @param {number} currentPage - 現在のページ番号
+ * @param {number} totalPages - 総ページ数
+ * @param {string} [baseUrl] - ベースURL
+ * @param {Object} [queryParams] - クエリパラメータ
+ * @param {string} [class] - 追加CSSクラス
+ */
+const current = currentPage || 1;
+const total = totalPages || 1;
+const base = baseUrl || '';
+const params = queryParams || {};
+const additionalClass = (typeof className !== 'undefined') ? className : '';
+
+// クエリパラメータを文字列に変換
+const buildQuery = (page) => {
+  const queryObj = { ...params, page };
+  const queryString = Object.keys(queryObj)
+    .filter(key => queryObj[key] !== undefined && queryObj[key] !== null && queryObj[key] !== '')
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryObj[key])}`)
+    .join('&');
+  return queryString ? `?${queryString}` : '';
+};
+
+// 表示するページ番号の範囲を計算
+const getPageNumbers = () => {
+  const delta = 2; // 現在ページの前後に表示するページ数
+  const range = [];
+  const start = Math.max(1, current - delta);
+  const end = Math.min(total, current + delta);
+
+  for (let i = start; i <= end; i++) {
+    range.push(i);
+  }
+  return range;
+};
+
+const pageNumbers = getPageNumbers();
+%>
+
+<% if (total > 1) { %>
+<nav class="pagination <%= additionalClass %>" role="navigation" aria-label="ページネーション">
+  <ul class="pagination__list">
+    <!-- 最初のページ -->
+    <% if (current > 1) { %>
+      <li class="pagination__item">
+        <%- include('../atoms/link', {
+          href: base + buildQuery(1),
+          text: '最初',
+          className: 'pagination__link pagination__link--first',
+          title: '最初のページに移動'
+        }) %>
+      </li>
+    <% } %>
+
+    <!-- 前のページ -->
+    <% if (current > 1) { %>
+      <li class="pagination__item">
+        <%- include('../atoms/link', {
+          href: base + buildQuery(current - 1),
+          text: '前へ',
+          className: 'pagination__link pagination__link--prev',
+          title: '前のページに移動'
+        }) %>
+      </li>
+    <% } %>
+
+    <!-- 開始省略記号 -->
+    <% if (pageNumbers[0] > 1) { %>
+      <% if (pageNumbers[0] > 2) { %>
+        <li class="pagination__item pagination__ellipsis">
+          <span>...</span>
+        </li>
+      <% } %>
+    <% } %>
+
+    <!-- ページ番号 -->
+    <% pageNumbers.forEach(page => { %>
+      <li class="pagination__item">
+        <% if (page === current) { %>
+          <span class="pagination__link pagination__link--current" aria-current="page">
+            <%= page %>
+          </span>
+        <% } else { %>
+          <%- include('../atoms/link', {
+            href: base + buildQuery(page),
+            text: page.toString(),
+            className: 'pagination__link',
+            title: page + 'ページに移動'
+          }) %>
+        <% } %>
+      </li>
+    <% }); %>
+
+    <!-- 終了省略記号 -->
+    <% if (pageNumbers[pageNumbers.length - 1] < total) { %>
+      <% if (pageNumbers[pageNumbers.length - 1] < total - 1) { %>
+        <li class="pagination__item pagination__ellipsis">
+          <span>...</span>
+        </li>
+      <% } %>
+    <% } %>
+
+    <!-- 次のページ -->
+    <% if (current < total) { %>
+      <li class="pagination__item">
+        <%- include('../atoms/link', {
+          href: base + buildQuery(current + 1),
+          text: '次へ',
+          className: 'pagination__link pagination__link--next',
+          title: '次のページに移動'
+        }) %>
+      </li>
+    <% } %>
+
+    <!-- 最後のページ -->
+    <% if (current < total) { %>
+      <li class="pagination__item">
+        <%- include('../atoms/link', {
+          href: base + buildQuery(total),
+          text: '最後',
+          className: 'pagination__link pagination__link--last',
+          title: '最後のページに移動'
+        }) %>
+      </li>
+    <% } %>
+  </ul>
+
+  <!-- ページ情報 -->
+  <div class="pagination__info">
+    <span class="pagination__info-text">
+      <%= current %>ページ / <%= total %>ページ中
+    </span>
+  </div>
+</nav>
+<% } %>

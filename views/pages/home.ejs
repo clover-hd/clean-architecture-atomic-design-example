@@ -1,0 +1,268 @@
+<%
+/**
+ * Home Page
+ * @param {Array} [featuredProducts] - 注目商品配列
+ * @param {Array} [categories] - カテゴリ配列
+ * @param {Object} [stats] - サイト統計情報
+ */
+const products = featuredProducts || [];
+const categoryList = categories || [];
+const siteStats = stats || {};
+
+// パンくずリスト
+const breadcrumbs = [
+  { href: '/', text: 'ホーム' }
+];
+%>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero__container">
+    <div class="hero__content">
+      <h1 class="hero__title">
+        TypeScript ECサイト<br>
+        学習プロジェクト
+      </h1>
+      <p class="hero__description">
+        クリーンアーキテクチャとアトミックデザインを実践的に学べるECサイトです。<br>
+        TypeScriptの型安全性と設計原則を体験しながら、本格的なWebアプリケーション開発を習得できます。
+      </p>
+      <div class="hero__actions">
+        <%- include('../atoms/button', {
+          type: 'primary',
+          text: '商品を見る',
+          href: '/products',
+          size: 'large',
+          className: 'hero__cta',
+          disabled: false,
+          id: ''
+        }) %>
+
+        <%- include('../atoms/button', {
+          type: 'secondary',
+          text: 'プロジェクトについて',
+          href: '/about',
+          size: 'large',
+          className: 'hero__about',
+          disabled: false,
+          id: ''
+        }) %>
+      </div>
+    </div>
+
+    <div class="hero__image">
+      <%- include('../atoms/image', {
+        src: '/images/hero-illustration.svg',
+        alt: 'ECサイト学習プロジェクトのイラスト',
+        className: 'hero__illustration',
+        width: '600',
+        height: '400',
+        id: '',
+        lazy: false,
+        sizes: '',
+        srcset: ''
+      }) %>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+  <div class="features__container">
+    <h2 class="features__title">学習できる技術</h2>
+    <div class="features__grid">
+      <div class="features__item">
+        <div class="features__icon">🏗️</div>
+        <h3 class="features__item-title">クリーンアーキテクチャ</h3>
+        <p class="features__item-description">
+          依存関係逆転原理に基づく4層構造で、保守性の高いコードを学習できます。
+        </p>
+      </div>
+
+      <div class="features__item">
+        <div class="features__icon">⚛️</div>
+        <h3 class="features__item-title">アトミックデザイン</h3>
+        <p class="features__item-description">
+          5段階のコンポーネント階層で、再利用可能なUI設計を体験できます。
+        </p>
+      </div>
+
+      <div class="features__item">
+        <div class="features__icon">🔷</div>
+        <h3 class="features__item-title">TypeScript</h3>
+        <p class="features__item-description">
+          型安全性とインターフェース駆動設計で、品質の高い開発を実践できます。
+        </p>
+      </div>
+
+      <div class="features__item">
+        <div class="features__icon">🧪</div>
+        <h3 class="features__item-title">テスト駆動開発</h3>
+        <p class="features__item-description">
+          Jest + Supertestによる包括的なテスト戦略を学習できます。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Categories Section -->
+<% if (categoryList.length > 0) { %>
+<section class="categories">
+  <div class="categories__container">
+    <h2 class="categories__title">商品カテゴリ</h2>
+    <div class="categories__grid">
+      <% categoryList.forEach(category => { %>
+        <div class="categories__item">
+          <a href="/products?category=<%= category.slug %>" class="categories__link">
+            <div class="categories__image">
+              <%- include('../atoms/image', {
+                src: category.image || '/images/category-default.svg',
+                alt: category.name,
+                className: 'categories__img',
+                width: '300',
+                height: '200'
+              }) %>
+            </div>
+            <div class="categories__content">
+              <h3 class="categories__name"><%= category.name %></h3>
+              <p class="categories__count">
+                <%= category.productCount || 0 %>件の商品
+              </p>
+            </div>
+          </a>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- Featured Products Section -->
+<% if (products.length > 0) { %>
+<section class="featured-products">
+  <div class="featured-products__container">
+    <div class="featured-products__header">
+      <h2 class="featured-products__title">注目商品</h2>
+      <%- include('../atoms/link', {
+        href: '/products',
+        text: 'すべての商品を見る →',
+        className: 'featured-products__view-all'
+      }) %>
+    </div>
+
+    <div class="featured-products__grid">
+      <% products.slice(0, 4).forEach(product => { %>
+        <div class="featured-products__item">
+          <%- include('../molecules/product-card', {
+            product: product,
+            showAddToCart: true,
+            className: 'featured-products__card'
+          }) %>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- Stats Section -->
+<% if (Object.keys(siteStats).length > 0) { %>
+<section class="stats">
+  <div class="stats__container">
+    <h2 class="stats__title">プロジェクト実績</h2>
+    <div class="stats__grid">
+      <% if (siteStats.productCount) { %>
+        <div class="stats__item">
+          <div class="stats__number"><%= siteStats.productCount.toLocaleString() %></div>
+          <div class="stats__label">登録商品数</div>
+        </div>
+      <% } %>
+
+      <% if (siteStats.userCount) { %>
+        <div class="stats__item">
+          <div class="stats__number"><%= siteStats.userCount.toLocaleString() %></div>
+          <div class="stats__label">会員数</div>
+        </div>
+      <% } %>
+
+      <% if (siteStats.orderCount) { %>
+        <div class="stats__item">
+          <div class="stats__number"><%= siteStats.orderCount.toLocaleString() %></div>
+          <div class="stats__label">累計注文数</div>
+        </div>
+      <% } %>
+
+      <div class="stats__item">
+        <div class="stats__number">95%</div>
+        <div class="stats__label">型カバレッジ</div>
+      </div>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- Newsletter Subscription -->
+<section class="newsletter">
+  <div class="newsletter__container">
+    <div class="newsletter__content">
+      <h2 class="newsletter__title">最新情報をお届け</h2>
+      <p class="newsletter__description">
+        新商品情報やお得なキャンペーン、学習コンテンツの更新情報をメールでお知らせします。
+      </p>
+
+      <form class="newsletter__form" action="/newsletter/subscribe" method="POST">
+        <div class="newsletter__input-group">
+          <%- include('../atoms/input', {
+            type: 'email',
+            name: 'email',
+            placeholder: 'メールアドレスを入力',
+            required: true,
+            className: 'newsletter__input'
+          }) %>
+
+          <%- include('../atoms/button', {
+            type: 'primary',
+            text: '登録する',
+            className: 'newsletter__submit'
+          }) %>
+        </div>
+
+        <p class="newsletter__privacy">
+          <%- include('../atoms/link', {
+            href: '/privacy',
+            text: 'プライバシーポリシー',
+            className: 'newsletter__privacy-link'
+          }) %>
+          に同意の上、ご登録ください。
+        </p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Page-specific script -->
+<script>
+  // ページ固有の機能
+  document.addEventListener('DOMContentLoaded', function() {
+    // Hero section animation
+    const hero = document.querySelector('.hero');
+    if (hero) {
+      hero.classList.add('hero--loaded');
+    }
+
+    // Featured products lazy loading
+    const productCards = document.querySelectorAll('.featured-products__card');
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('product-card--visible');
+          }
+        });
+      });
+
+      productCards.forEach(card => observer.observe(card));
+    }
+  });
+</script>

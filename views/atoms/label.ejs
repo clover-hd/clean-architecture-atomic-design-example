@@ -1,0 +1,26 @@
+<%
+/**
+ * Label Atom Component
+ * @param {string} text - ラベルテキスト
+ * @param {string} [for] - 対象input要素のID
+ * @param {boolean} [required] - 必須フラグ
+ * @param {string} [class] - 追加CSSクラス
+ * @param {string} [id] - ID属性
+ */
+const labelText = typeof text !== 'undefined' ? text : '';
+const labelFor = typeof htmlFor !== 'undefined' ? htmlFor : '';
+const isRequired = typeof required !== 'undefined' ? required : false;
+const additionalClass = typeof className !== 'undefined' ? className : '';
+const labelId = typeof id !== 'undefined' ? id : '';
+%>
+
+<label
+  <% if (labelId) { %>id="<%= labelId %>"<% } %>
+  <% if (labelFor) { %>for="<%= labelFor %>"<% } %>
+  class="label <%= additionalClass %>"
+>
+  <%= labelText %>
+  <% if (isRequired) { %>
+    <span class="label__required" aria-label="必須">*</span>
+  <% } %>
+</label>

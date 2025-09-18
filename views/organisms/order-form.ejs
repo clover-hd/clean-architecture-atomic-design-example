@@ -1,0 +1,347 @@
+<%
+/**
+ * OrderForm Organism Component
+ * @param {Object} [user] - ユーザー情報
+ * @param {Object} [cart] - カート情報
+ * @param {Object} [errors] - バリデーションエラー
+ * @param {Object} [formData] - フォームデータ
+ * @param {string} [class] - 追加CSSクラス
+ */
+const userData = user || {};
+const cartData = cart || {};
+const formErrors = errors || {};
+const formValues = formData || {};
+const additionalClass = (typeof className !== 'undefined') ? className : '';
+%>
+
+<section class="order-form <%= additionalClass %>">
+  <form class="order-form__form" action="/orders" method="POST" novalidate>
+    <!-- CSRF Token -->
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+    <!-- 配送先情報 -->
+    <fieldset class="order-form__section">
+      <legend class="order-form__section-title">配送先情報</legend>
+
+      <div class="order-form__grid">
+        <!-- 姓 -->
+        <div class="order-form__field order-form__field--half">
+          <%- include('../atoms/label', {
+            text: '姓',
+            htmlFor: 'lastName',
+            required: true,
+            className: 'order-form__label'
+          }) %>
+          <%- include('../atoms/input', {
+            type: 'text',
+            name: 'lastName',
+            id: 'lastName',
+            value: formValues.lastName || userData.lastName || '',
+            required: true,
+            className: 'order-form__input' + (formErrors.lastName ? ' order-form__input--error' : '')
+          }) %>
+          <% if (formErrors.lastName) { %>
+            <span class="order-form__error" role="alert"><%= formErrors.lastName %></span>
+          <% } %>
+        </div>
+
+        <!-- 名 -->
+        <div class="order-form__field order-form__field--half">
+          <%- include('../atoms/label', {
+            text: '名',
+            htmlFor: 'firstName',
+            required: true,
+            className: 'order-form__label'
+          }) %>
+          <%- include('../atoms/input', {
+            type: 'text',
+            name: 'firstName',
+            id: 'firstName',
+            value: formValues.firstName || userData.firstName || '',
+            required: true,
+            className: 'order-form__input' + (formErrors.firstName ? ' order-form__input--error' : '')
+          }) %>
+          <% if (formErrors.firstName) { %>
+            <span class="order-form__error" role="alert"><%= formErrors.firstName %></span>
+          <% } %>
+        </div>
+
+        <!-- 郵便番号 -->
+        <div class="order-form__field">
+          <%- include('../atoms/label', {
+            text: '郵便番号',
+            htmlFor: 'postalCode',
+            required: true,
+            className: 'order-form__label'
+          }) %>
+          <%- include('../atoms/input', {
+            type: 'text',
+            name: 'postalCode',
+            id: 'postalCode',
+            placeholder: '123-4567',
+            value: formValues.postalCode || userData.postalCode || '',
+            required: true,
+            pattern: '[0-9]{3}-[0-9]{4}',
+            className: 'order-form__input' + (formErrors.postalCode ? ' order-form__input--error' : '')
+          }) %>
+          <% if (formErrors.postalCode) { %>
+            <span class="order-form__error" role="alert"><%= formErrors.postalCode %></span>
+          <% } %>
+        </div>
+
+        <!-- 都道府県 -->
+        <div class="order-form__field">
+          <%- include('../atoms/label', {
+            text: '都道府県',
+            htmlFor: 'prefecture',
+            required: true,
+            className: 'order-form__label'
+          }) %>
+          <select
+            name="prefecture"
+            id="prefecture"
+            required
+            class="order-form__select <%= formErrors.prefecture ? 'order-form__select--error' : '' %>"
+          >
+            <option value="">選択してください</option>
+            <option value="北海道" <%= (formValues.prefecture || userData.prefecture) === '北海道' ? 'selected' : '' %>>北海道</option>
+            <option value="東京都" <%= (formValues.prefecture || userData.prefecture) === '東京都' ? 'selected' : '' %>>東京都</option>
+            <option value="大阪府" <%= (formValues.prefecture || userData.prefecture) === '大阪府' ? 'selected' : '' %>>大阪府</option>
+            <!-- 他の都道府県も同様に追加 -->
+          </select>
+          <% if (formErrors.prefecture) { %>
+            <span class="order-form__error" role="alert"><%= formErrors.prefecture %></span>
+          <% } %>
+        </div>
+
+        <!-- 市区町村 -->
+        <div class="order-form__field">
+          <%- include('../atoms/label', {
+            text: '市区町村',
+            htmlFor: 'city',
+            required: true,
+            className: 'order-form__label'
+          }) %>
+          <%- include('../atoms/input', {
+            type: 'text',
+            name: 'city',
+            id: 'city',
+            value: formValues.city || userData.city || '',
+            required: true,
+            className: 'order-form__input' + (formErrors.city ? ' order-form__input--error' : '')
+          }) %>
+          <% if (formErrors.city) { %>
+            <span class="order-form__error" role="alert"><%= formErrors.city %></span>
+          <% } %>
+        </div>
+
+        <!-- 番地・建物名 -->
+        <div class="order-form__field">
+          <%- include('../atoms/label', {
+            text: '番地・建物名',
+            htmlFor: 'address',
+            required: true,
+            className: 'order-form__label'
+          }) %>
+          <%- include('../atoms/input', {
+            type: 'text',
+            name: 'address',
+            id: 'address',
+            value: formValues.address || userData.address || '',
+            required: true,
+            className: 'order-form__input' + (formErrors.address ? ' order-form__input--error' : '')
+          }) %>
+          <% if (formErrors.address) { %>
+            <span class="order-form__error" role="alert"><%= formErrors.address %></span>
+          <% } %>
+        </div>
+
+        <!-- 電話番号 -->
+        <div class="order-form__field">
+          <%- include('../atoms/label', {
+            text: '電話番号',
+            htmlFor: 'phone',
+            required: true,
+            className: 'order-form__label'
+          }) %>
+          <%- include('../atoms/input', {
+            type: 'tel',
+            name: 'phone',
+            id: 'phone',
+            placeholder: '090-1234-5678',
+            value: formValues.phone || userData.phone || '',
+            required: true,
+            className: 'order-form__input' + (formErrors.phone ? ' order-form__input--error' : '')
+          }) %>
+          <% if (formErrors.phone) { %>
+            <span class="order-form__error" role="alert"><%= formErrors.phone %></span>
+          <% } %>
+        </div>
+
+        <!-- メールアドレス -->
+        <div class="order-form__field">
+          <%- include('../atoms/label', {
+            text: 'メールアドレス',
+            htmlFor: 'email',
+            required: true,
+            className: 'order-form__label'
+          }) %>
+          <%- include('../atoms/input', {
+            type: 'email',
+            name: 'email',
+            id: 'email',
+            value: formValues.email || userData.email || '',
+            required: true,
+            className: 'order-form__input' + (formErrors.email ? ' order-form__input--error' : '')
+          }) %>
+          <% if (formErrors.email) { %>
+            <span class="order-form__error" role="alert"><%= formErrors.email %></span>
+          <% } %>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 配送オプション -->
+    <fieldset class="order-form__section">
+      <legend class="order-form__section-title">配送オプション</legend>
+
+      <div class="order-form__shipping-options">
+        <div class="order-form__radio-group">
+          <input
+            type="radio"
+            name="shippingOption"
+            id="standard"
+            value="standard"
+            class="order-form__radio"
+            <%= (formValues.shippingOption || 'standard') === 'standard' ? 'checked' : '' %>
+          />
+          <%- include('../atoms/label', {
+            text: '通常配送（送料500円、3-5営業日）',
+            htmlFor: 'standard',
+            className: 'order-form__radio-label'
+          }) %>
+        </div>
+
+        <div class="order-form__radio-group">
+          <input
+            type="radio"
+            name="shippingOption"
+            id="express"
+            value="express"
+            class="order-form__radio"
+            <%= formValues.shippingOption === 'express' ? 'checked' : '' %>
+          />
+          <%- include('../atoms/label', {
+            text: '速達配送（送料1000円、翌日配送）',
+            htmlFor: 'express',
+            className: 'order-form__radio-label'
+          }) %>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 支払い方法 -->
+    <fieldset class="order-form__section">
+      <legend class="order-form__section-title">支払い方法</legend>
+
+      <div class="order-form__payment-options">
+        <div class="order-form__radio-group">
+          <input
+            type="radio"
+            name="paymentMethod"
+            id="cod"
+            value="cod"
+            class="order-form__radio"
+            <%= (formValues.paymentMethod || 'cod') === 'cod' ? 'checked' : '' %>
+          />
+          <%- include('../atoms/label', {
+            text: '代金引換',
+            htmlFor: 'cod',
+            className: 'order-form__radio-label'
+          }) %>
+        </div>
+
+        <div class="order-form__radio-group">
+          <input
+            type="radio"
+            name="paymentMethod"
+            id="bank"
+            value="bank"
+            class="order-form__radio"
+            <%= formValues.paymentMethod === 'bank' ? 'checked' : '' %>
+          />
+          <%- include('../atoms/label', {
+            text: '銀行振込',
+            htmlFor: 'bank',
+            className: 'order-form__radio-label'
+          }) %>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 備考 -->
+    <fieldset class="order-form__section">
+      <legend class="order-form__section-title">備考（任意）</legend>
+
+      <div class="order-form__field">
+        <%- include('../atoms/label', {
+          text: 'ご要望・備考',
+          htmlFor: 'notes',
+          className: 'order-form__label'
+        }) %>
+        <textarea
+          name="notes"
+          id="notes"
+          class="order-form__textarea"
+          rows="4"
+          placeholder="配送時のご要望など"
+        ><%= formValues.notes || '' %></textarea>
+      </div>
+    </fieldset>
+
+    <!-- 利用規約同意 -->
+    <div class="order-form__agreement">
+      <div class="order-form__checkbox-group">
+        <input
+          type="checkbox"
+          name="agreeToTerms"
+          id="agreeToTerms"
+          required
+          class="order-form__checkbox <%= formErrors.agreeToTerms ? 'order-form__checkbox--error' : '' %>"
+        />
+        <%- include('../atoms/label', {
+          htmlFor: 'agreeToTerms',
+          className: 'order-form__checkbox-label'
+        }) %>
+          <%- include('../atoms/link', {
+            href: '/terms',
+            text: '利用規約',
+            target: '_blank',
+            className: 'order-form__terms-link'
+          }) %>
+          に同意する
+        </label>
+      </div>
+      <% if (formErrors.agreeToTerms) { %>
+        <span class="order-form__error" role="alert"><%= formErrors.agreeToTerms %></span>
+      <% } %>
+    </div>
+
+    <!-- 送信ボタン -->
+    <div class="order-form__actions">
+      <%- include('../atoms/button', {
+        type: 'primary',
+        text: '注文を確定する',
+        className: 'order-form__submit',
+        size: 'large'
+      }) %>
+
+      <%- include('../atoms/button', {
+        type: 'secondary',
+        text: 'カートに戻る',
+        href: '/cart',
+        className: 'order-form__back'
+      }) %>
+    </div>
+  </form>
+</section>

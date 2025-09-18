@@ -1,0 +1,145 @@
+<%
+/**
+ * Login Page View
+ * Uses the base layout with auth-specific styling
+ * @param {string} title - Page title (passed from controller)
+ * @param {Object} errors - Error messages (passed from controller)
+ * @param {Array} messages - Flash messages (passed from controller)
+ */
+%>
+
+<!-- Auth Page Content -->
+<div class="auth-page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <!-- Auth Card Header -->
+      <div class="auth-card__header">
+        <h1 class="auth-card__title"><%= title %></h1>
+        <p class="auth-card__description">
+          <%= description || 'アカウントにログインして、お買い物をお楽しみください。' %>
+        </p>
+      </div>
+
+      <!-- Flash Messages -->
+      <% if (errors && Object.keys(errors).length > 0) { %>
+        <%- include('../partials/error-messages', {
+          errors: errors,
+          type: 'error'
+        }) %>
+      <% } %>
+
+      <% if (messages && messages.length > 0) { %>
+        <%- include('../partials/error-messages', {
+          messages: messages,
+          type: 'info'
+        }) %>
+      <% } %>
+
+      <!-- Auth Card Body -->
+      <div class="auth-card__body">
+        <%- include('../molecules/login-form', {
+          action: '/auth/login',
+          method: 'POST',
+          errors: errors || {},
+          emailValue: typeof email !== 'undefined' ? email : ''
+        }) %>
+      </div>
+
+      <!-- Auth Card Footer -->
+      <div class="auth-card__footer">
+        <div class="auth-card__links">
+          <%- include('../atoms/link', {
+            href: '/auth/register',
+            text: 'アカウントをお持ちでない方はこちら',
+            className: 'auth-card__link'
+          }) %>
+
+          <%- include('../atoms/link', {
+            href: '/auth/forgot-password',
+            text: 'パスワードを忘れた方はこちら',
+            className: 'auth-card__link'
+          }) %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Auth Page Specific CSS -->
+<style>
+.auth-page {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background-color: #f8f9fa;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.auth-card__header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-card__title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.auth-card__description {
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.auth-card__body {
+  margin-bottom: 1.5rem;
+}
+
+.auth-card__footer {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+}
+
+.auth-card__links {
+  text-align: center;
+}
+
+.auth-card__link {
+  display: block;
+  color: #3b82f6;
+  text-decoration: none;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  transition: color 0.2s;
+}
+
+.auth-card__link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .auth-page {
+    padding: 1rem;
+  }
+
+  .auth-card {
+    padding: 1.5rem;
+  }
+}
+</style>

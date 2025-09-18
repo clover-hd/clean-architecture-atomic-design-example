@@ -1,0 +1,41 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="300" height="300" fill="#f8fafc"/>
+
+  <!-- Gradient background -->
+  <defs>
+    <linearGradient id="electronicsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e0f2fe;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f1f5f9;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" fill="url(#electronicsGrad)"/>
+
+  <!-- Laptop Icon -->
+  <rect x="75" y="110" width="150" height="90" rx="8" fill="#334155" stroke="#475569" stroke-width="2"/>
+  <rect x="80" y="115" width="140" height="80" fill="#1e293b"/>
+  <rect x="85" y="120" width="130" height="65" fill="#0f172a"/>
+
+  <!-- Screen content -->
+  <rect x="90" y="130" width="40" height="8" fill="#06b6d4"/>
+  <rect x="90" y="145" width="60" height="6" fill="#10b981"/>
+  <rect x="90" y="158" width="80" height="6" fill="#f59e0b"/>
+  <rect x="90" y="171" width="50" height="6" fill="#8b5cf6"/>
+
+  <!-- Laptop base -->
+  <rect x="70" y="200" width="160" height="15" rx="3" fill="#475569"/>
+  <circle cx="150" cy="207" r="3" fill="#94a3b8"/>
+
+  <!-- Decorative circuit lines -->
+  <path d="M50 60 L80 60 L80 80 L110 80" stroke="#0ea5e9" stroke-width="2" fill="none"/>
+  <circle cx="50" cy="60" r="4" fill="#0ea5e9"/>
+  <circle cx="110" cy="80" r="4" fill="#0ea5e9"/>
+
+  <path d="M250 240 L220 240 L220 220 L190 220" stroke="#06b6d4" stroke-width="2" fill="none"/>
+  <circle cx="250" cy="240" r="4" fill="#06b6d4"/>
+  <circle cx="190" cy="220" r="4" fill="#06b6d4"/>
+
+  <!-- Text -->
+  <text x="150" y="260" text-anchor="middle" fill="#475569" font-family="Arial, sans-serif" font-size="16" font-weight="600">Electronics</text>
+  <text x="150" y="280" text-anchor="middle" fill="#64748b" font-family="Arial, sans-serif" font-size="12">電子機器</text>
+</svg>
